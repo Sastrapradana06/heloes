@@ -3,7 +3,7 @@
 import Navbar from "../layout/navbar";
 import Sidebar from "../layout/sidebar";
 
-export default function AppShell({ children }) {
+export default function DashboardTemplate({ children }) {
   return (
     <main className="w-full min-h-[100vh] max-h-max pb-6 relative ">
       <Sidebar />

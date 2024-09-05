@@ -8,6 +8,10 @@
   font-weight: 600;
 }
 
+.border-rr {
+  border: 1px solid red;
+}
+
 #main {
   background-image: url("/bg-login1.jpeg");
   object-fit: cover;

@@ -13,8 +13,8 @@ const AuthForm = ({ formType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { data: input, handleChange } = useHandleInput({
     name: "",
-    email: "",
-    password: "",
+    email: "sastra@gmail.com",
+    password: "123",
   });
 
   const navigate = useNavigate();
@@ -24,7 +24,11 @@ const AuthForm = ({ formType }) => {
     e.preventDefault();
     handleAlert("success", "Login Success");
     // setIsLoading(true);
-    // navigate("/");
+    if (formType == "login") {
+      if (input.email == "sastra@gmail.com" && input.password == "123") {
+        navigate("/dashboard");
+      }
+    }
   };
 
   return (

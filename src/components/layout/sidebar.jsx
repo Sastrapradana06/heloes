@@ -8,6 +8,8 @@ import { PiHandsClapping } from "react-icons/pi";
 import { useShallow } from "zustand/react/shallow";
 import ListMenu from "../ui/list-menu";
 import { useAppStore } from "../../store";
+import { BsHandbag } from "react-icons/bs";
+import { FaUsers } from "react-icons/fa";
 
 export default function Sidebar() {
   const [isCategory, setIsCategory] = useState(false);
@@ -53,7 +55,17 @@ export default function Sidebar() {
         </div>
       </div>
       <div className="py-4 overflow-y-auto p-4">
-        <ul className="space-y-2 font-medium">
+        <ul className="space-y-6 font-medium">
+          <ListMenu
+            link="/dashboard"
+            teks="Dashboard"
+            icons1={
+              <BiCategoryAlt
+                size={23}
+                className="text-purple-400 lg:text-purple-700"
+              />
+            }
+          />
           <li>
             <button
               onClick={() => setIsCategory(!isCategory)}
@@ -62,12 +74,12 @@ export default function Sidebar() {
               aria-controls="dropdown-example"
               data-collapse-toggle="dropdown-example"
             >
-              <BiCategoryAlt
-                size={25}
+              <BsHandbag
+                size={23}
                 className="text-purple-400 lg:text-purple-700"
               />
-              <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap text-white lg:text-gray-700">
-                Category
+              <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap text-white lg:text-gray-700 text-[.9rem]">
+                Products
               </span>
               <MdKeyboardArrowDown size={20} />
             </button>
@@ -83,13 +95,23 @@ export default function Sidebar() {
               <ListMenu link="#" teks="Celana" />
             </ul>
           </li>
+          <ListMenu
+            link="customers"
+            teks="Customers"
+            icons1={
+              <FaUsers
+                size={23}
+                className="text-purple-400 lg:text-purple-700"
+              />
+            }
+          />
 
           <ListMenu
             link="#"
             teks="Store"
             icons1={
               <IoStorefrontSharp
-                size={25}
+                size={23}
                 className="text-purple-400 lg:text-purple-700"
               />
             }
