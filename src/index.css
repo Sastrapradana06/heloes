@@ -12,6 +12,10 @@
   border: 1px solid red;
 }
 
+.border-br {
+  border: 1px solid blue;
+}
+
 #main {
   background-image: url("/bg-login1.jpeg");
   object-fit: cover;

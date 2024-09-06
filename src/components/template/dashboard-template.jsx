@@ -9,7 +9,7 @@ export default function DashboardTemplate({ children }) {
       <Sidebar />
       <Navbar />
       <div className="w-full h-max mt-[80px] flex justify-center lg:justify-end lg:p-4">
-        <div className="w-[90%] min-h-[90vh] max-h-max  lg:w-[80%] ">
+        <div className="w-[95%] min-h-[90vh] max-h-max  lg:w-[80%] ">
           {children}
         </div>
       </div>

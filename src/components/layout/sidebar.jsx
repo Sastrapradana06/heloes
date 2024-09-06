@@ -89,10 +89,13 @@ export default function Sidebar() {
                 isCategory ? "hidden" : ""
               } py-2 space-y-2 transition-transform`}
             >
-              <ListMenu link="#" teks="Semua" />
-              <ListMenu link="#" teks="Elektronik" />
-              <ListMenu link="#" teks="Baju" />
-              <ListMenu link="#" teks="Celana" />
+              <ListMenu link="/dashboard/products" teks="semua" />
+              <ListMenu
+                link="/dashboard/products?query=elektronik"
+                teks="elektronik"
+              />
+              <ListMenu link="/dashboard/products?query=baju" teks="baju" />
+              <ListMenu link="/dashboard/products?query=celana" teks="celana" />
             </ul>
           </li>
           <ListMenu

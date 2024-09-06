@@ -26,9 +26,7 @@ export default function Dashboard() {
           />
         </div>
         <div className="w-full mt-6 bg-slate-100 rounded-lg shadow-md p-3">
-          <h1 className="text-lg text-cyan-500 font-semibold">
-            Top selling products
-          </h1>
+          <h1 className="text-lg font-semibold">Top selling products</h1>
           <div className="relative overflow-auto  mt-3  min-h-max max-h-[300px]">
             <table className="w-full text-sm text-left text-gray-700">
               <thead className="text-xs uppercase bg-transparent border-b">

@@ -1,10 +1,8 @@
 /* eslint-disable react/prop-types */
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const ListMenu = ({ link, teks, icons1 }) => {
-  const { pathname } = window.location;
-
-  console.log({ pathname });
+  const { pathname, search } = useLocation();
 
   return (
     <li>
@@ -25,7 +23,9 @@ const ListMenu = ({ link, teks, icons1 }) => {
       ) : (
         <Link
           to={link}
-          className={`flex items-center w-full p-2  transition duration-75 rounded-lg pl-11 group   hover:text-purple-300 lg:hover:text-purple-600 text-[.8rem]`}
+          className={`flex items-center w-full p-2  transition duration-75 rounded-lg pl-11 group    text-[.8rem] capitalize ${
+            search.includes(teks) ? "text-purple-400" : ""
+          }`}
         >
           {teks}
         </Link>
