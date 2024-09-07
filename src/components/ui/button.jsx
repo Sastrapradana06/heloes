@@ -3,7 +3,7 @@
 const Button = ({ teks, icons, type, color, size, func }) => {
   return (
     <button
-      className={`w-max ${buttonColor[color]} ${buttonSize[size]}  duration-200 cursor-pointer flex items-center justify-center gap-2 text-white`}
+      className={`w-max ${buttonColor[color]} ${buttonSize[size]}  duration-200 cursor-pointer flex items-center justify-center gap-2 `}
       type={type}
       onClick={func}
     >
@@ -14,13 +14,13 @@ const Button = ({ teks, icons, type, color, size, func }) => {
 };
 
 const buttonColor = {
-  purple: "bg-purple-500 hover:bg-purple-600",
-  blue: "bg-blue-500 hover:bg-blue-600",
+  purple: "bg-purple-500 hover:bg-purple-600 text-white",
+  blue: "bg-blue-500 hover:bg-blue-600 text-white",
   red: "bg-red-500 hover:bg-red-600 text-white",
-  green: "bg-green-500 hover:bg-green-600",
-  yellow: "bg-yellow-500 hover:bg-yellow-600",
-  dark: "bg-gray-800 hover:bg-gray-900",
-  light: "bg-slate-200 hover:bg-slate-300",
+  green: "bg-green-500 hover:bg-green-600 text-white",
+  yellow: "bg-yellow-500 hover:bg-yellow-600 text-white",
+  dark: "bg-gray-800 hover:bg-gray-900 text-white",
+  light: "bg-slate-200 tex-black hover:bg-slate-300",
 };
 
 const buttonSize = {

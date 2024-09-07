@@ -5,20 +5,66 @@ import useHandleFile from "../../../hooks/useHandleFile";
 import { useRef } from "react";
 import Input from "../../../components/ui/input";
 import Textarea from "../../../components/ui/textarea";
+import { TiArrowLeft } from "react-icons/ti";
+import { Link, useNavigate } from "react-router-dom";
+import useHandleInput from "../../../hooks/useHandleInput";
+import { useAppStore } from "../../../store";
+import { useShallow } from "zustand/react/shallow";
+import { Alert, useHandleAlert } from "sstra-alert";
 
 export default function AddProducts() {
+  const [setProducts] = useAppStore(useShallow((state) => [state.setProducts]));
+
   const fileRef = useRef();
   const { file, handleFile, urlImg } = useHandleFile();
+  const { data: input, handleChange } = useHandleInput({
+    fileImg: "",
+    image: "",
+    name: "",
+    category: "",
+    description: "",
+    price: "",
+    stock: "",
+    brand: "",
+    tags: "",
+    color: "",
+    size: "",
+    sales: 0,
+  });
 
-  console.log({ file, urlImg });
+  const navigate = useNavigate();
+  const { data: alert, status, handleAlert } = useHandleAlert();
 
   const handleUpload = () => {
     fileRef.current.click();
   };
 
+  const handleSubmit = () => {
+    input.fileImg = file;
+    input.image = urlImg;
+    setProducts(input);
+    handleAlert("success", "Product added successfully");
+    setTimeout(() => {
+      navigate("/dashboard/products");
+    }, 3000);
+  };
+
   return (
     <DashboardTemplate>
-      <h1 className="text-[1.3rem] font-semibold">Add Product</h1>
+      <>
+        <Alert
+          status={status}
+          type={alert.type}
+          message={alert.message}
+          background={"bg-gray-600"}
+        />
+      </>
+      <div className="flex items-center gap-2">
+        <Link to="/dashboard/products">
+          <TiArrowLeft size={25} className="text-black" />
+        </Link>
+        <h1 className="text-[1.3rem] font-semibold">Add Product</h1>
+      </div>
       <div className="w-full  mt-5 flex flex-col  lg:flex-row-reverse gap-3 ">
         <div className="w-full h-max p-3 rounded-lg shadow-md bg-slate-100 lg:w-[35%] lg:p-3">
           <p className="text-[.8rem] lg:text-[.9rem]  ">Product image</p>
@@ -32,7 +78,7 @@ export default function AddProducts() {
             </div>
           ) : (
             <img
-              src="/kemeja.jpeg"
+              src={urlImg}
               alt=""
               className="w-[75%] h-[250px] border-dashed border-gray-500 border rounded-lg mt-3 mb-3 object-cover"
             />
@@ -45,13 +91,13 @@ export default function AddProducts() {
             ref={fileRef}
           />
           <Button
-            teks={"Upload"}
+            teks={"Choose image"}
             size={"small"}
             color={"yellow"}
             func={handleUpload}
           />
         </div>
-        <div className="w-full h-max  flex flex-col gap-3">
+        <div className="w-full h-max  flex flex-col gap-3 ">
           <div className="w-full rounded-lg shadow-md bg-slate-100 p-2 lg:p-3 ">
             <p className="text-[.8rem] lg:text-[.9rem]">Product Information</p>
             <div className="w-full mt-2 flex flex-col gap-3">
@@ -59,19 +105,20 @@ export default function AddProducts() {
                 name={"name"}
                 type={"text"}
                 placeholder={"Product name"}
+                value={input.name}
+                setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
               />
               <select
                 className="w-full border outline-none text-sm px-3 py-2 rounded-lg bg-transparent  focus:border-purple-500 focus:border-2"
                 name="category"
+                onChange={handleChange}
               >
                 <option value="default">Category</option>
-                <option value="baju">Baju</option>
-                <option value="hoddie">Hoddie</option>
-                <option value="kemeja">Kemeja</option>
-                <option value="celana">Celana</option>
-                <option value="sepatu">Sepatu</option>
+                <option value="clothing">Clothing</option>
+                <option value="shoes">Shoes</option>
+                <option value="accessories">Accessories</option>
               </select>
 
               <Textarea
@@ -89,6 +136,8 @@ export default function AddProducts() {
                 name={"price"}
                 type={"text"}
                 placeholder={"Price"}
+                value={input.price}
+                setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
               />
@@ -96,6 +145,8 @@ export default function AddProducts() {
                 name={"stock"}
                 type={"text"}
                 placeholder={"Stock"}
+                value={input.stock}
+                setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
               />
@@ -108,6 +159,8 @@ export default function AddProducts() {
                 name={"brand"}
                 type={"text"}
                 placeholder={"Brand"}
+                value={input.brand}
+                setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
               />
@@ -115,18 +168,24 @@ export default function AddProducts() {
                 name={"tags"}
                 type={"text"}
                 placeholder={"Tags"}
+                value={input.tags}
+                setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
               />
             </div>
           </div>
-          <div className="w-full rounded-lg shadow-md bg-slate-100 p-2 lg:p-3 ">
-            <p className="text-[.8rem] lg:text-[.9rem] ">Color & Size</p>
+          <div className="w-full rounded-lg shadow-md bg-slate-100 p-2 lg:p-3 mb-10 lg:mb-6">
+            <p className="text-[.8rem] lg:text-[.9rem] ">
+              Variant Color & Size
+            </p>
             <div className="w-full mt-2 flex flex-col gap-3 lg:flex-row lg:items-center">
               <Input
                 name={"color"}
                 type={"text"}
                 placeholder={"red, green, blue"}
+                value={input.color}
+                setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
               />
@@ -134,10 +193,21 @@ export default function AddProducts() {
                 name={"size"}
                 type={"text"}
                 placeholder={"s, l, xl"}
+                value={input.size}
+                setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
               />
             </div>
+          </div>
+          <div className="w-full mt-4  flex items-center justify-end bg-slate-100 gap-4 fixed bottom-0 left-0 px-4 py-3">
+            <Button teks={"Cancel"} size={"small"} color={"light"} />
+            <Button
+              teks={"Add product"}
+              size={"small"}
+              color={"blue"}
+              func={handleSubmit}
+            />
           </div>
         </div>
       </div>

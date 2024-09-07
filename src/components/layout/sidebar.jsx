@@ -10,6 +10,7 @@ import ListMenu from "../ui/list-menu";
 import { useAppStore } from "../../store";
 import { BsHandbag } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa";
+import { BsCart4 } from "react-icons/bs";
 
 export default function Sidebar() {
   const [isCategory, setIsCategory] = useState(false);
@@ -91,18 +92,32 @@ export default function Sidebar() {
             >
               <ListMenu link="/dashboard/products" teks="semua" />
               <ListMenu
-                link="/dashboard/products?query=elektronik"
-                teks="elektronik"
+                link="/dashboard/products?query=clothing"
+                teks="clothing"
               />
-              <ListMenu link="/dashboard/products?query=baju" teks="baju" />
-              <ListMenu link="/dashboard/products?query=celana" teks="celana" />
+
+              <ListMenu
+                link="/dashboard/products?query=accessories"
+                teks="accessories"
+              />
+              <ListMenu link="/dashboard/products?query=shoes" teks="shoes" />
             </ul>
           </li>
           <ListMenu
-            link="customers"
-            teks="Customers"
+            link="/dashboard/customer"
+            teks="Customer"
             icons1={
               <FaUsers
+                size={23}
+                className="text-purple-400 lg:text-purple-700"
+              />
+            }
+          />
+          <ListMenu
+            link="/dashboard/orders"
+            teks="Orders"
+            icons1={
+              <BsCart4
                 size={23}
                 className="text-purple-400 lg:text-purple-700"
               />

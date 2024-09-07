@@ -6,6 +6,8 @@ import { MdAdd, MdDelete } from "react-icons/md";
 import { LuPencilLine } from "react-icons/lu";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useAppStore } from "../../../store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function Products() {
   const [data, setData] = useState([]);
@@ -13,32 +15,7 @@ export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
 
-  const products = [
-    {
-      id: 1,
-      name: "Celana cowo",
-      category: "celana",
-      price: 120000,
-      stock: 78,
-      image: "/celana.jpeg",
-    },
-    {
-      id: 2,
-      name: "Hoddie holigans",
-      category: "hoddie",
-      price: 170000,
-      stock: 15,
-      image: "/hoddie.jpeg",
-    },
-    {
-      id: 3,
-      name: "Kemeja kotak-kotak",
-      category: "kemeja",
-      price: 135000,
-      stock: 25,
-      image: "/kemeja.jpeg",
-    },
-  ];
+  const [products] = useAppStore(useShallow((state) => [state.products]));
 
   const handleSearch = () => {
     setSearchParams({ query: q });
@@ -47,9 +24,16 @@ export default function Products() {
   useEffect(() => {
     if (query) {
       setQ(query);
-      const filteredProducts = products.filter((product) =>
-        product.name.toLowerCase().includes(query.toLowerCase())
-      );
+      const filteredProducts = products.filter((product) => {
+        const name = product.name.toLowerCase().includes(query.toLowerCase());
+        const tags = product.tags.toLowerCase().includes(query.toLowerCase());
+        const category = product.category
+          .toLowerCase()
+          .includes(query.toLowerCase());
+        console.log({ name, tags, category });
+
+        return name || category || tags;
+      });
       return setData(filteredProducts);
     }
     setData(products);
@@ -91,11 +75,11 @@ export default function Products() {
               />
             </div>
           </div>
-          <div className="relative overflow-auto mt-6 min-h-max max-h-[300px]">
+          <div className="relative overflow-auto mt-6 min-h-max max-h-[450px]">
             <table className="w-full text-sm text-left text-gray-700">
               <thead className="text-xs uppercase bg-slate-200 border-b">
                 <tr>
-                  <th scope="col" className="py-3">
+                  <th scope="col" className="pl-1 py-3">
                     Id
                   </th>
                   <th scope="col" className="px-4 py-3">
@@ -105,7 +89,14 @@ export default function Products() {
                     Category
                   </th>
                   <th scope="col" className="px-3 py-3">
+                    Sales
+                  </th>
+
+                  <th scope="col" className="px-3 py-3">
                     Stock
+                  </th>
+                  <th scope="col" className="px-3 py-3">
+                    Price
                   </th>
                   <th scope="col" className="px-3 py-3">
                     Action
@@ -122,12 +113,12 @@ export default function Products() {
                     </td>
                   </tr>
                 ) : (
-                  data.map((item) => (
+                  data.map((item, i) => (
                     <tr
                       className="hover:bg-slate-200 cursor-pointer  border-b"
-                      key={item.id}
+                      key={i + 1}
                     >
-                      <td className="py-4">#{item.id}</td>
+                      <td className="pl-1 py-4">#{i + 1}</td>
                       <th scope="row" className="px-4 py-4">
                         <div className="w-[220px] h-max flex items-center gap-2">
                           <img
@@ -138,10 +129,21 @@ export default function Products() {
                           {item.name}
                         </div>
                       </th>
+
                       <td className="px-3 py-4">
                         <p className="p-2 bg-slate-200 w-max rounded-lg capitalize text-[.8rem]">
                           {item.category}
                         </p>
+                      </td>
+                      <td className="px-3 py-4">
+                        <div className="w-[36px] h-max ">
+                          {item.sales.toLocaleString("id-ID")}
+                        </div>
+                      </td>
+                      <td className="px-3 py-4">
+                        <div className="w-[35px] h-max">
+                          {item.stock.toLocaleString("id-ID")}
+                        </div>
                       </td>
                       <td className="px-3 py-4">
                         <div className="w-[100px] h-max">

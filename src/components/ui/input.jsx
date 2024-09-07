@@ -5,11 +5,11 @@ const Input = ({ name, type, placeholder, color, size, value, setValue }) => {
     <input
       type={type}
       name={name}
-      value={value || ""}
+      value={value}
       onChange={setValue}
       placeholder={placeholder}
       required={true}
-      className={`w-full border outline-none ${inputSize[size]} ${inputColor[color]}`}
+      className={`w-full border outline-none ${inputSize[size]} ${inputColor[color]} text-gray-700`}
     />
   );
 };

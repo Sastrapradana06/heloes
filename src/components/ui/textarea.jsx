@@ -3,7 +3,7 @@
 const Textarea = ({ name, placeholder, value, onChange, color, size }) => {
   return (
     <textarea
-      className={`w-full border outline-none ${inputSize[size]} ${inputColor[color]}`}
+      className={`w-full border outline-none ${inputSize[size]} ${inputColor[color]} text-gray-700`}
       name={name}
       placeholder={placeholder}
       value={value}
