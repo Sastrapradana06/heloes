@@ -10,30 +10,46 @@ import { useSearchParams } from "react-router-dom";
 
 export default function Orders() {
   const [data, setData] = useState([]);
-
+  const [q, setQ] = useState("");
   const [orders] = useAppStore(useShallow((state) => [state.orders]));
   const [searchParams, setSearchParams] = useSearchParams();
   const status = searchParams.get("status") || "";
+  const query = searchParams.get("query") || "";
+
+  const handleSearch = () => {
+    searchParams.set("query", q);
+    setSearchParams(searchParams);
+  };
 
   const handleFilterChangeStatus = (e) => {
     const status = e.target.value;
     if (status === "semua") {
-      setSearchParams({});
+      searchParams.delete("status");
     } else {
-      setSearchParams({ status });
+      searchParams.set("status", status);
     }
+
+    setSearchParams(searchParams);
   };
 
   useEffect(() => {
+    let dataOrders = orders;
+    if (query) {
+      dataOrders = dataOrders.filter((order) => {
+        const order_id = order.order_id == query;
+        const name = order.name_customer
+          .toLowerCase()
+          .includes(query.toLowerCase());
+
+        return order_id || name;
+      });
+    }
     if (status) {
-      const filteredOrders = orders.filter(
-        (item) => item.order_status == status
-      );
-      return setData(filteredOrders);
+      dataOrders = dataOrders.filter((item) => item.order_status == status);
     }
 
-    setData(orders);
-  }, [orders, status]);
+    setData(dataOrders);
+  }, [orders, status, query]);
 
   return (
     <DashboardTemplate>
@@ -47,8 +63,8 @@ export default function Orders() {
                 placeholder={"Search in orders"}
                 name={"search"}
                 size={"small"}
-                // value={q}
-                // setValue={(e) => setQ(e.target.value)}
+                value={q}
+                setValue={(e) => setQ(e.target.value)}
                 color={"transparent"}
               />
               <Button
@@ -56,7 +72,7 @@ export default function Orders() {
                 size={"small"}
                 color={"purple"}
                 icons={<CiSearch size={20} color="white" />}
-                // func={handleSearch}
+                func={handleSearch}
               />
             </div>
             <div className=" h-max lg:w-max borderr">
@@ -124,7 +140,9 @@ export default function Orders() {
                         </div>
                       </th>
 
-                      <td className="px-3 py-4">{item.products.length + 1}</td>
+                      <td className="px-3 py-4">
+                        {item.products.length + 1} items
+                      </td>
                       <td className="px-3 py-4">
                         <p className="w-[100px] text-green-500">
                           Rp. {item.total_price.toLocaleString("id-ID")}

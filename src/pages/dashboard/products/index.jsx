@@ -14,30 +14,34 @@ export default function Products() {
   const [q, setQ] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
+  const category = searchParams.get("category") || "";
 
   const [products] = useAppStore(useShallow((state) => [state.products]));
 
   const handleSearch = () => {
-    setSearchParams({ query: q });
+    searchParams.set("query", q);
+    setSearchParams(searchParams);
   };
 
   useEffect(() => {
+    let dataProducts = products;
+
+    if (category) {
+      dataProducts = dataProducts.filter(
+        (product) =>
+          product.category.toLowerCase() === category.toLocaleLowerCase()
+      );
+    }
     if (query) {
       setQ(query);
-      const filteredProducts = products.filter((product) => {
+      dataProducts = dataProducts.filter((product) => {
         const name = product.name.toLowerCase().includes(query.toLowerCase());
         const tags = product.tags.toLowerCase().includes(query.toLowerCase());
-        const category = product.category
-          .toLowerCase()
-          .includes(query.toLowerCase());
-        console.log({ name, tags, category });
-
-        return name || category || tags;
+        return name || tags;
       });
-      return setData(filteredProducts);
     }
-    setData(products);
-  }, [query]);
+    setData(dataProducts);
+  }, [query, products, category]);
 
   return (
     <DashboardTemplate>

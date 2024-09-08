@@ -11,12 +11,24 @@ import { useAppStore } from "../../store";
 import { BsHandbag } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa";
 import { BsCart4 } from "react-icons/bs";
+import { useSearchParams } from "react-router-dom";
 
 export default function Sidebar() {
   const [isCategory, setIsCategory] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useAppStore(
     useShallow((set) => [set.isSidebarOpen, set.setIsSidebarOpen])
   );
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleNavigate = (url) => {
+    if (url === "semua") {
+      searchParams.delete("category");
+    } else {
+      searchParams.set("category", url);
+    }
+    setSearchParams(searchParams);
+  };
 
   const handleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -88,19 +100,20 @@ export default function Sidebar() {
               id="dropdown-example"
               className={`${
                 isCategory ? "hidden" : ""
-              } py-2 space-y-2 transition-transform`}
+              } py-2 space-y-2 transition-transform  flex flex-col`}
             >
               <ListMenu link="/dashboard/products" teks="semua" />
-              <ListMenu
-                link="/dashboard/products?query=clothing"
-                teks="clothing"
-              />
+              <button onClick={() => handleNavigate("clothing")}>
+                <ListMenu teks="clothing" />
+              </button>
 
-              <ListMenu
-                link="/dashboard/products?query=accessories"
-                teks="accessories"
-              />
-              <ListMenu link="/dashboard/products?query=shoes" teks="shoes" />
+              <button onClick={() => handleNavigate("accessories")}>
+                <ListMenu teks="accessories" />
+              </button>
+
+              <button onClick={() => handleNavigate("shoes")}>
+                <ListMenu teks="shoes" />
+              </button>
             </ul>
           </li>
           <ListMenu
