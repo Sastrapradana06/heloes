@@ -10,6 +10,7 @@ import Products from "./pages/dashboard/products/index.jsx";
 import AddProducts from "./pages/dashboard/products/add-products.jsx";
 import Customer from "./pages/dashboard/customer/index.jsx";
 import Orders from "./pages/dashboard/orders/index.jsx";
+import DetailOrder from "./pages/dashboard/orders/detail-order.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")).render(
 
         <Route path="/dashboard/customer" element={<Customer />} />
         <Route path="/dashboard/orders" element={<Orders />} />
+        <Route path="/dashboard/orders/:id" element={<DetailOrder />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

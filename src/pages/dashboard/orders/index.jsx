@@ -6,7 +6,7 @@ import Button from "../../../components/ui/button";
 import { CiSearch } from "react-icons/ci";
 import Input from "../../../components/ui/input";
 import { IoArrowRedoSharp } from "react-icons/io5";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 export default function Orders() {
   const [data, setData] = useState([]);
@@ -163,12 +163,14 @@ export default function Orders() {
                       </td>
 
                       <th scope="row" className="px-4 py-4">
-                        <button
-                          className="p-1 rounded-md bg-yellow-500 ml-2"
-                          title="detail"
-                        >
-                          <IoArrowRedoSharp size={20} color="white" />
-                        </button>
+                        <Link to={`/dashboard/orders/${item.order_id}`}>
+                          <button
+                            className="p-1 rounded-md bg-yellow-500 ml-2"
+                            title="detail"
+                          >
+                            <IoArrowRedoSharp size={20} color="white" />
+                          </button>
+                        </Link>
                       </th>
                     </tr>
                   ))

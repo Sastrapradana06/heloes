@@ -87,14 +87,22 @@ export const useAppStore = create((set) => ({
       name_customer: "John Doe",
       products: [
         {
-          product_name: "Men's Casual Pants",
+          image: "/celana.jpeg",
+          name: "Men's Casual Pants",
           quantity: 2,
           price_per_item: 450000,
+        },
+        {
+          image: "/casio.jpeg",
+          name: "Casio Analog Watch",
+          quantity: 1,
+          price_per_item: 350000,
         },
       ],
       total_price: 1450000,
       order_date: "2024-09-07",
       order_status: "diproses",
+      shipping_cost: 50000,
       shipping_address: "Jl. Mawar No. 10, Jakarta, 10110",
       payment_method: "Indomaret",
     },
@@ -106,7 +114,8 @@ export const useAppStore = create((set) => ({
 
       products: [
         {
-          product_name: "Wireless Noise-Cancelling Headphones",
+          image: "/hoddie.jpeg",
+          name: "Oversized Hoodie",
           quantity: 1,
           price_per_item: 1500000,
         },
@@ -114,6 +123,7 @@ export const useAppStore = create((set) => ({
       total_price: 1500000,
       order_date: "2024-09-06",
       order_status: "dikirim",
+      shipping_cost: 0,
       shipping_address: "Jl. Anggrek No. 20, Bandung, 40123",
       payment_method: "Bank Transfer",
     },
