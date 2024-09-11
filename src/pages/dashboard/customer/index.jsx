@@ -1,6 +1,4 @@
-import { useShallow } from "zustand/react/shallow";
 import DashboardTemplate from "../../../components/template/dashboard-template";
-import { useAppStore } from "../../../store";
 import { useEffect, useState } from "react";
 import Input from "../../../components/ui/input";
 import Button from "../../../components/ui/button";
@@ -8,14 +6,18 @@ import { CiSearch } from "react-icons/ci";
 
 import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
 import { useSearchParams } from "react-router-dom";
+import { useDataCustomers } from "../../../services/useDataCustomers";
+import Loading from "../../../components/layout/loading";
+import { formatDate } from "../../../utils";
 
 export default function Customer() {
-  const [customers] = useAppStore(useShallow((state) => [state.customers]));
   const [data, setData] = useState([]);
   const [q, setQ] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
   const status = searchParams.get("status") || "";
+
+  const { data: customers, isFetching } = useDataCustomers();
 
   const handleSearch = () => {
     searchParams.set("query", q);
@@ -33,11 +35,14 @@ export default function Customer() {
   };
 
   useEffect(() => {
+    if (!customers) return;
     let dataCustomers = customers;
     if (query) {
       setQ(query);
       dataCustomers = dataCustomers.filter((customer) => {
-        const name = customer.name.toLowerCase().includes(query.toLowerCase());
+        const name = customer.username
+          .toLowerCase()
+          .includes(query.toLowerCase());
         const email = customer.email
           .toLowerCase()
           .includes(query.toLowerCase());
@@ -55,6 +60,7 @@ export default function Customer() {
 
   return (
     <DashboardTemplate>
+      {isFetching && <Loading />}
       <div className="w-full  mt-1 lg:mt-0">
         <h1 className="text-[1.3rem] font-semibold">Customer</h1>
         <div className="w-full h-max rounded-lg bg-slate-100 shadow-md mt-5 px-1 py-2 lg:p-3">
@@ -139,12 +145,12 @@ export default function Customer() {
                       <th scope="row" className="px-4 py-4">
                         <div className="w-[200px] h-max flex items-center gap-2">
                           <img
-                            src={item.image}
+                            src={item.avatar}
                             alt="cover"
                             className="w-[35px] h-[40px] object-cover rounded-md"
                           />
                           <div className="">
-                            <p>{item.name}</p>
+                            <p>{item.username}</p>
                             <p className="text-gray-500 text-[.7rem]">
                               {item.email}
                             </p>
@@ -154,15 +160,17 @@ export default function Customer() {
 
                       <td className="px-3 py-4">{item.phone}</td>
                       <td className="px-3 py-4">
-                        <p className="w-[80px]">{item.created_at}</p>
+                        <p className="w-[100px]">
+                          {formatDate(item.created_at)}
+                        </p>
                       </td>
                       <td className="px-3 py-4">
                         <div className="w-[36px] h-max ">
-                          {item.orders.toLocaleString("id-ID")}
+                          {item.total_order.toLocaleString("id-ID")}
                         </div>
                       </td>
                       <td className="px-2">
-                        {item.status == "active" ? (
+                        {item.status == "aktif" ? (
                           <div className="w-[15px] h-[15px] rounded-full bg-green-500 m-auto lg:ml-5"></div>
                         ) : (
                           <div className="w-[15px] h-[15px] rounded-full bg-red-500 m-auto lg:ml-5"></div>
@@ -170,7 +178,7 @@ export default function Customer() {
                       </td>
 
                       <th scope="row" className="px-4 py-4">
-                        {item.status == "active" ? (
+                        {item.status == "aktif" ? (
                           <button
                             className="p-2 rounded-md bg-red-500"
                             title="non aktifkan akun"

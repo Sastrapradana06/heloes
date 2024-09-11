@@ -38,6 +38,11 @@ export default function DetailOrder() {
     return totalWithShipping.toLocaleString("id-ID");
   }
 
+  function calculateTotalPriceQty(price, qty) {
+    const total = price * qty;
+    return total.toLocaleString("id-ID");
+  }
+
   return (
     <DashboardTemplate>
       <div className="w-full  mt-1 lg:mt-0">
@@ -110,9 +115,13 @@ export default function DetailOrder() {
                         {product.name}
                       </p>
                       <p className="text-[.8rem]  lg:text-[.9rem]  lg:w-[400px]">
-                        Rp. {product.price_per_item.toLocaleString("id-ID")} *{" "}
+                        Rp. {product.price_per_item.toLocaleString("id-ID")}
+                        <span className="text-red-500 ml-2 mr-2">*</span>
                         {product.quantity} = Rp.{" "}
-                        {product.price_per_item * product.quantity}
+                        {calculateTotalPriceQty(
+                          product.price_per_item,
+                          product.quantity
+                        )}
                       </p>
                     </div>
                   </div>
@@ -136,7 +145,9 @@ export default function DetailOrder() {
                 <p className="text-[.9rem] lg:text-[1rem] text-gray-500">
                   Total
                 </p>
-                <p>Rp. {calculateTotalPriceWithShipping(data)}</p>
+                <p className="text-green-500">
+                  Rp. {calculateTotalPriceWithShipping(data)}
+                </p>
               </div>
             </div>
           </>

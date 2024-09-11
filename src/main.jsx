@@ -11,21 +11,29 @@ import AddProducts from "./pages/dashboard/products/add-products.jsx";
 import Customer from "./pages/dashboard/customer/index.jsx";
 import Orders from "./pages/dashboard/orders/index.jsx";
 import DetailOrder from "./pages/dashboard/orders/detail-order.jsx";
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/products" element={<Products />} />
-        <Route path="/dashboard/products/add" element={<AddProducts />} />
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-        <Route path="/dashboard/customer" element={<Customer />} />
-        <Route path="/dashboard/orders" element={<Orders />} />
-        <Route path="/dashboard/orders/:id" element={<DetailOrder />} />
-      </Routes>
-    </BrowserRouter>
-  </StrictMode>
+const queryClient = new QueryClient();
+
+createRoot(document.getElementById("root")).render(
+  <QueryClientProvider client={queryClient}>
+    <StrictMode>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/products" element={<Products />} />
+          <Route path="/dashboard/products/add" element={<AddProducts />} />
+
+          <Route path="/dashboard/customer" element={<Customer />} />
+          <Route path="/dashboard/orders" element={<Orders />} />
+          <Route path="/dashboard/orders/:id" element={<DetailOrder />} />
+        </Routes>
+      </BrowserRouter>
+    </StrictMode>
+    <ReactQueryDevtools initialIsOpen={true} />
+  </QueryClientProvider>
 );
