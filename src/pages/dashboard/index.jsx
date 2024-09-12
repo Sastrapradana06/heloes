@@ -3,8 +3,12 @@ import DashboardTemplate from "../../components/template/dashboard-template";
 import { BsCart4 } from "react-icons/bs";
 import { IoWalletOutline } from "react-icons/io5";
 import CountCard from "../../components/layout/count-card";
-
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 export default function Dashboard() {
+  const auth = useAuthUser();
+
+  console.log({ auth });
+
   return (
     <DashboardTemplate>
       <section className="w-full ">

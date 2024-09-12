@@ -13,27 +13,41 @@ import Orders from "./pages/dashboard/orders/index.jsx";
 import DetailOrder from "./pages/dashboard/orders/detail-order.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import createStore from "react-auth-kit/createStore";
+import AuthProvider from "react-auth-kit";
+import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
+export const store = createStore({
+  authName: "_auth",
+  authType: "cookie",
+  cookieDomain: window.location.hostname,
+  cookieSecure: window.location.protocol === "https:",
+});
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
-  <QueryClientProvider client={queryClient}>
-    <StrictMode>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/products" element={<Products />} />
-          <Route path="/dashboard/products/add" element={<AddProducts />} />
+  <AuthProvider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <StrictMode>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          <Route path="/dashboard/customer" element={<Customer />} />
-          <Route path="/dashboard/orders" element={<Orders />} />
-          <Route path="/dashboard/orders/:id" element={<DetailOrder />} />
-        </Routes>
-      </BrowserRouter>
-    </StrictMode>
-    <ReactQueryDevtools initialIsOpen={true} />
-  </QueryClientProvider>
+            <Route element={<AuthOutlet fallbackPath="/login" />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard/products" element={<Products />} />
+              <Route path="/dashboard/products/add" element={<AddProducts />} />
+
+              <Route path="/dashboard/customer" element={<Customer />} />
+              <Route path="/dashboard/orders" element={<Orders />} />
+              <Route path="/dashboard/orders/:id" element={<DetailOrder />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </StrictMode>
+      <ReactQueryDevtools initialIsOpen={true} />
+    </QueryClientProvider>
+  </AuthProvider>
 );
