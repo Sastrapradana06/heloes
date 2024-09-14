@@ -15,7 +15,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import createStore from "react-auth-kit/createStore";
 import AuthProvider from "react-auth-kit";
-import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
+// import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
 export const store = createStore({
   authName: "_auth",
   authType: "cookie",
@@ -35,15 +35,15 @@ createRoot(document.getElementById("root")).render(
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            <Route element={<AuthOutlet fallbackPath="/login" />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/dashboard/products" element={<Products />} />
-              <Route path="/dashboard/products/add" element={<AddProducts />} />
+            {/* <Route element={<AuthOutlet fallbackPath="/login" />}> */}
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/products" element={<Products />} />
+            <Route path="/dashboard/products/add" element={<AddProducts />} />
 
-              <Route path="/dashboard/customer" element={<Customer />} />
-              <Route path="/dashboard/orders" element={<Orders />} />
-              <Route path="/dashboard/orders/:id" element={<DetailOrder />} />
-            </Route>
+            <Route path="/dashboard/customer" element={<Customer />} />
+            <Route path="/dashboard/orders" element={<Orders />} />
+            <Route path="/dashboard/orders/:id" element={<DetailOrder />} />
+            {/* </Route> */}
           </Routes>
         </BrowserRouter>
       </StrictMode>

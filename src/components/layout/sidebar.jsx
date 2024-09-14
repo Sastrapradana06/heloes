@@ -11,7 +11,7 @@ import { useAppStore } from "../../store";
 import { BsHandbag } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa";
 import { BsCart4 } from "react-icons/bs";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Sidebar() {
   const [isCategory, setIsCategory] = useState(false);
@@ -20,13 +20,20 @@ export default function Sidebar() {
   );
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const handleNavigate = (url) => {
     if (url === "semua") {
       searchParams.delete("category");
-    } else {
-      searchParams.set("category", url);
     }
+
+    if (pathname.includes("products")) {
+      searchParams.set("category", url);
+    } else {
+      return navigate(`/dashboard/products?category=${url}`);
+    }
+
     setSearchParams(searchParams);
   };
 

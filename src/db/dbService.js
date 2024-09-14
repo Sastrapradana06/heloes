@@ -24,6 +24,7 @@ export const getDataCustomer = async () => {
 
 export const inserDataDb = async (db, data) => {
   const { error } = await supabase.from(db).insert(data);
+  console.log({ error });
 
   if (error) {
     return {

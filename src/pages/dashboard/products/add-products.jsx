@@ -8,17 +8,25 @@ import Textarea from "../../../components/ui/textarea";
 import { TiArrowLeft } from "react-icons/ti";
 import { Link, useNavigate } from "react-router-dom";
 import useHandleInput from "../../../hooks/useHandleInput";
-import { useAppStore } from "../../../store";
-import { useShallow } from "zustand/react/shallow";
+
 import { Alert, useHandleAlert } from "sstra-alert";
+import {
+  useInvalidate,
+  useTambahProduct,
+} from "../../../services/useDataProducts";
+import Loading from "../../../components/layout/loading";
 
 export default function AddProducts() {
-  const [setProducts] = useAppStore(useShallow((state) => [state.setProducts]));
+  const { isPending, mutate } = useTambahProduct();
+  const { invalidateListQuery } = useInvalidate();
 
   const fileRef = useRef();
   const { file, handleFile, urlImg } = useHandleFile();
-  const { data: input, handleChange } = useHandleInput({
-    fileImg: "",
+  const {
+    data: input,
+    handleChange,
+    clearInput,
+  } = useHandleInput({
     image: "",
     name: "",
     category: "",
@@ -40,13 +48,22 @@ export default function AddProducts() {
   };
 
   const handleSubmit = () => {
-    input.fileImg = file;
+    // input.fileImg = file;
     input.image = urlImg;
-    setProducts(input);
-    handleAlert("success", "Product added successfully");
-    setTimeout(() => {
-      navigate("/dashboard/products");
-    }, 3000);
+
+    mutate(input, {
+      onSuccess: () => {
+        handleAlert("success", "Product added successfully");
+        invalidateListQuery("data-products");
+        setTimeout(() => {
+          navigate("/dashboard/products");
+        }, 3000);
+      },
+      onError: (error) => {
+        console.log({ error });
+        handleAlert("error", "Terjadi kesalahan");
+      },
+    });
   };
 
   return (
@@ -58,6 +75,7 @@ export default function AddProducts() {
           message={alert.message}
           background={"bg-gray-600"}
         />
+        {isPending && <Loading />}
       </>
       <div className="flex items-center gap-2">
         <Link to="/dashboard/products">
@@ -201,7 +219,12 @@ export default function AddProducts() {
             </div>
           </div>
           <div className="w-full mt-4  flex items-center justify-end bg-slate-100 gap-4 fixed bottom-0 left-0 px-4 py-3">
-            <Button teks={"Cancel"} size={"small"} color={"light"} />
+            <Button
+              teks={"Cancel"}
+              size={"small"}
+              color={"light"}
+              func={clearInput}
+            />
             <Button
               teks={"Add product"}
               size={"small"}

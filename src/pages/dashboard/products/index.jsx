@@ -6,8 +6,9 @@ import { MdAdd, MdDelete } from "react-icons/md";
 import { LuPencilLine } from "react-icons/lu";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useAppStore } from "../../../store";
-import { useShallow } from "zustand/react/shallow";
+
+import { useDataProducts } from "../../../services/useDataProducts";
+import Loading from "../../../components/layout/loading";
 
 export default function Products() {
   const [data, setData] = useState([]);
@@ -16,7 +17,7 @@ export default function Products() {
   const query = searchParams.get("query") || "";
   const category = searchParams.get("category") || "";
 
-  const [products] = useAppStore(useShallow((state) => [state.products]));
+  const { data: products, isFetching } = useDataProducts();
 
   const handleSearch = () => {
     searchParams.set("query", q);
@@ -24,6 +25,7 @@ export default function Products() {
   };
 
   useEffect(() => {
+    if (!products) return;
     let dataProducts = products;
 
     if (category) {
@@ -45,6 +47,7 @@ export default function Products() {
 
   return (
     <DashboardTemplate>
+      {isFetching && <Loading />}
       <div className="w-full  mt-1 lg:mt-0">
         <h1 className="text-[1.3rem] font-semibold">Products</h1>
         <div className="w-full h-max rounded-lg bg-slate-100 shadow-md mt-5 px-1 py-2 lg:p-3">
