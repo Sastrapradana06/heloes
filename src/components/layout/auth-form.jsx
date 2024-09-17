@@ -13,8 +13,9 @@ import {
   hashPassword,
   setCookies,
 } from "../../utils";
-import { getDataDbWithKey, inserDataDb } from "../../db/dbService";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
+import { insertUserDB } from "../../db/dbService/insert";
+import { getDataDbWithKey } from "../../db/dbService/fetch";
 
 const AuthForm = ({ formType }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +48,7 @@ const AuthForm = ({ formType }) => {
         password: hashedPassword,
       };
 
-      const insertData = await inserDataDb("user", data);
+      const insertData = await insertUserDB(data);
       if (!insertData.status) {
         setIsLoading(false);
         handleAlert("error", insertData.message);

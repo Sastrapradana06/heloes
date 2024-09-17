@@ -4,6 +4,9 @@ export const useAppStore = create((set) => ({
   isSidebarOpen: false,
   setIsSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
 
+  isModalDelete: false,
+  setIsModalDelete: (isModalDelete) => set({ isModalDelete }),
+
   products: [
     {
       id: 1,

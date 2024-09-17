@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { supabase } from "../supabase";
 
 export const getDataDb = async (db) => {
   const { data, error } = await supabase.from(db).select();
@@ -20,17 +20,4 @@ export const getDataCustomer = async () => {
   if (error) return [];
   const filter = data.filter((item) => item.role === "customer");
   return filter;
-};
-
-export const inserDataDb = async (db, data) => {
-  const { error } = await supabase.from(db).insert(data);
-  console.log({ error });
-
-  if (error) {
-    return {
-      status: false,
-      message: error.code == "23505" ? "Email sudah terdaftar" : error.message,
-    };
-  }
-  return { status: true, message: "Success" };
 };

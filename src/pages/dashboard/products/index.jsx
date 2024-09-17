@@ -7,17 +7,53 @@ import { LuPencilLine } from "react-icons/lu";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { useDataProducts } from "../../../services/useDataProducts";
+import {
+  useDataProducts,
+  useDeleteProduct,
+  useInvalidate,
+} from "../../../services/useDataProducts";
 import Loading from "../../../components/layout/loading";
+import ModalDelete from "../../../components/layout/modal-delete";
+import { useAppStore } from "../../../store";
+import { useShallow } from "zustand/react/shallow";
+import { Alert, useHandleAlert } from "sstra-alert";
 
 export default function Products() {
   const [data, setData] = useState([]);
   const [q, setQ] = useState("");
+  const [idDelete, setIdDelete] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
   const category = searchParams.get("category") || "";
+  const { data: alert, status, handleAlert } = useHandleAlert();
+
+  const [setIsModalDelete] = useAppStore(
+    useShallow((state) => [state.setIsModalDelete])
+  );
 
   const { data: products, isFetching } = useDataProducts();
+  const { isPending, mutate } = useDeleteProduct();
+  const { invalidateListQuery } = useInvalidate();
+
+  const deleteProduct = () => {
+    mutate(idDelete, {
+      onSuccess: () => {
+        setIsModalDelete(false);
+        handleAlert("success", "Product deleted successfully");
+        invalidateListQuery("data-products");
+      },
+      onError: (error) => {
+        console.log({ error });
+        setIsModalDelete(false);
+        handleAlert("error", "Terjadi kesalahan");
+      },
+    });
+  };
+
+  const showModal = (id) => {
+    setIdDelete(id);
+    setIsModalDelete(true);
+  };
 
   const handleSearch = () => {
     searchParams.set("query", q);
@@ -47,7 +83,16 @@ export default function Products() {
 
   return (
     <DashboardTemplate>
-      {isFetching && <Loading />}
+      <>
+        {isFetching || (isPending && <Loading />)}
+        <ModalDelete handleDelete={deleteProduct} />
+        <Alert
+          status={status}
+          type={alert.type}
+          message={alert.message}
+          background={"bg-gray-600"}
+        />
+      </>
       <div className="w-full  mt-1 lg:mt-0">
         <h1 className="text-[1.3rem] font-semibold">Products</h1>
         <div className="w-full h-max rounded-lg bg-slate-100 shadow-md mt-5 px-1 py-2 lg:p-3">
@@ -66,7 +111,7 @@ export default function Products() {
             <div className="w-full flex items-center gap-2 lg:w-[40%] lg:gap-4">
               <Input
                 type={"text"}
-                placeholder={"Seacrh in product"}
+                placeholder={"Search in product"}
                 name={"search"}
                 size={"small"}
                 value={q}
@@ -162,7 +207,7 @@ export default function Products() {
                           <button>
                             <LuPencilLine size={20} color="green" />
                           </button>
-                          <button>
+                          <button onClick={() => showModal(item.id)}>
                             <MdDelete size={20} color="crimson" />
                           </button>
                         </div>

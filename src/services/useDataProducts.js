@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getDataDb } from "../db/dbService";
-import { inserDataDb } from "../db/dbService/insert";
+import { getDataDb } from "../db/dbService/fetch";
+import { insertProductDB } from "../db/dbService/insert";
+import { deleteDataDb } from "../db/dbService/delete";
 
 export function useInvalidate() {
   const query = useQueryClient();
@@ -22,11 +23,22 @@ export const useDataProducts = () => {
 
 export const useTambahProduct = () => {
   const tambahSiswa = useMutation({
-    mutationFn: (item) => inserDataDb("products", item),
+    mutationFn: (item) => insertProductDB(item),
     onError: (error) => {
       return error;
     },
   });
 
   return tambahSiswa;
+};
+
+export const useDeleteProduct = () => {
+  const result = useMutation({
+    mutationFn: (id) => deleteDataDb("products", "id", id),
+    onError: (error) => {
+      return error;
+    },
+  });
+
+  return result;
 };

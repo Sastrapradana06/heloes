@@ -1,6 +1,15 @@
 /* eslint-disable react/prop-types */
 
-const Input = ({ name, type, placeholder, color, size, value, setValue }) => {
+const Input = ({
+  name,
+  type,
+  placeholder,
+  color,
+  size,
+  value,
+  setValue,
+  required,
+}) => {
   return (
     <input
       type={type}
@@ -8,7 +17,7 @@ const Input = ({ name, type, placeholder, color, size, value, setValue }) => {
       value={value}
       onChange={setValue}
       placeholder={placeholder}
-      required={true}
+      required={required}
       className={`w-full border outline-none ${inputSize[size]} ${inputColor[color]} `}
     />
   );

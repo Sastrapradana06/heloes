@@ -27,6 +27,7 @@ export default function AddProducts() {
     handleChange,
     clearInput,
   } = useHandleInput({
+    fileImg: "",
     image: "",
     name: "",
     category: "",
@@ -47,9 +48,9 @@ export default function AddProducts() {
     fileRef.current.click();
   };
 
-  const handleSubmit = () => {
-    // input.fileImg = file;
-    input.image = urlImg;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    input.fileImg = file;
 
     mutate(input, {
       onSuccess: () => {
@@ -57,7 +58,7 @@ export default function AddProducts() {
         invalidateListQuery("data-products");
         setTimeout(() => {
           navigate("/dashboard/products");
-        }, 3000);
+        }, 2000);
       },
       onError: (error) => {
         console.log({ error });
@@ -115,7 +116,10 @@ export default function AddProducts() {
             func={handleUpload}
           />
         </div>
-        <div className="w-full h-max  flex flex-col gap-3 ">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full h-max  flex flex-col gap-3 "
+        >
           <div className="w-full rounded-lg shadow-md bg-slate-100 p-2 lg:p-3 ">
             <p className="text-[.8rem] lg:text-[.9rem]">Product Information</p>
             <div className="w-full mt-2 flex flex-col gap-3">
@@ -127,6 +131,7 @@ export default function AddProducts() {
                 setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
+                required={true}
               />
               <select
                 className="w-full border outline-none text-sm px-3 py-2 rounded-lg bg-transparent  focus:border-purple-500 focus:border-2"
@@ -158,6 +163,7 @@ export default function AddProducts() {
                 setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
+                required={true}
               />
               <Input
                 name={"stock"}
@@ -167,6 +173,7 @@ export default function AddProducts() {
                 setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
+                required={true}
               />
             </div>
           </div>
@@ -181,6 +188,7 @@ export default function AddProducts() {
                 setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
+                required={true}
               />
               <Input
                 name={"tags"}
@@ -190,6 +198,7 @@ export default function AddProducts() {
                 setValue={handleChange}
                 color={"transparent"}
                 size={"small"}
+                required={true}
               />
             </div>
           </div>
@@ -229,10 +238,10 @@ export default function AddProducts() {
               teks={"Add product"}
               size={"small"}
               color={"blue"}
-              func={handleSubmit}
+              type={"submit"}
             />
           </div>
-        </div>
+        </form>
       </div>
     </DashboardTemplate>
   );
