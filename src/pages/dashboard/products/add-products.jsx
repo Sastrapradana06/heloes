@@ -2,32 +2,37 @@ import { LuImage } from "react-icons/lu";
 import DashboardTemplate from "../../../components/template/dashboard-template";
 import Button from "../../../components/ui/button";
 import useHandleFile from "../../../hooks/useHandleFile";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Input from "../../../components/ui/input";
 import Textarea from "../../../components/ui/textarea";
 import { TiArrowLeft } from "react-icons/ti";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import useHandleInput from "../../../hooks/useHandleInput";
 
 import { Alert, useHandleAlert } from "sstra-alert";
 import {
   useInvalidate,
   useTambahProduct,
+  useUpdateProduct,
 } from "../../../services/useDataProducts";
 import Loading from "../../../components/layout/loading";
+import { getDataDbWithKey } from "../../../db/dbService/fetch";
 
 export default function AddProducts() {
+  const [isLoad, setIsLoad] = useState(false);
+
   const { isPending, mutate } = useTambahProduct();
   const { invalidateListQuery } = useInvalidate();
+  const updateProduct = useUpdateProduct();
 
   const fileRef = useRef();
-  const { file, handleFile, urlImg } = useHandleFile();
+  const { file, handleFile, urlImg, editUrlImg } = useHandleFile();
   const {
     data: input,
     handleChange,
+    editData,
     clearInput,
   } = useHandleInput({
-    fileImg: "",
     image: "",
     name: "",
     category: "",
@@ -43,6 +48,23 @@ export default function AddProducts() {
 
   const navigate = useNavigate();
   const { data: alert, status, handleAlert } = useHandleAlert();
+  const { id } = useParams();
+
+  const getProductEdit = async () => {
+    setIsLoad(true);
+    const result = await getDataDbWithKey("products", "id", id);
+
+    if (result) {
+      editUrlImg(result.image);
+      editData(result);
+    } else {
+      handleAlert("error", "Product not found");
+      setTimeout(() => {
+        navigate("/dashboard/products");
+      }, 2000);
+    }
+    setIsLoad(false);
+  };
 
   const handleUpload = () => {
     fileRef.current.click();
@@ -50,22 +72,48 @@ export default function AddProducts() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    input.fileImg = file;
 
-    mutate(input, {
-      onSuccess: () => {
-        handleAlert("success", "Product added successfully");
-        invalidateListQuery("data-products");
-        setTimeout(() => {
-          navigate("/dashboard/products");
-        }, 2000);
-      },
-      onError: (error) => {
-        console.log({ error });
-        handleAlert("error", "Terjadi kesalahan");
-      },
-    });
+    if (!id) {
+      input.fileImg = file;
+      if (!input.fileImg) {
+        handleAlert("info", "Please select an image");
+        return;
+      }
+      mutate(input, {
+        onSuccess: () => {
+          handleAlert("success", "Product added successfully");
+          invalidateListQuery("data-products");
+          setTimeout(() => {
+            navigate("/dashboard/products");
+          }, 2000);
+        },
+        onError: (error) => {
+          console.log({ error });
+          handleAlert("error", "Terjadi kesalahan");
+        },
+      });
+    } else {
+      updateProduct.mutate(input, {
+        onSuccess: () => {
+          handleAlert("success", "Product updated successfully");
+          invalidateListQuery("data-products");
+          setTimeout(() => {
+            navigate("/dashboard/products");
+          }, 2000);
+        },
+        onError: (error) => {
+          console.log({ error });
+          handleAlert("error", "Terjadi kesalahan");
+        },
+      });
+    }
   };
+
+  useEffect(() => {
+    if (id) {
+      getProductEdit();
+    }
+  }, []);
 
   return (
     <DashboardTemplate>
@@ -76,7 +124,7 @@ export default function AddProducts() {
           message={alert.message}
           background={"bg-gray-600"}
         />
-        {isPending && <Loading />}
+        {(isPending || updateProduct.isPending || isLoad) && <Loading />}
       </>
       <div className="flex items-center gap-2">
         <Link to="/dashboard/products">
@@ -113,6 +161,7 @@ export default function AddProducts() {
             teks={"Choose image"}
             size={"small"}
             color={"yellow"}
+            disabled={id ? true : false}
             func={handleUpload}
           />
         </div>
@@ -137,6 +186,7 @@ export default function AddProducts() {
                 className="w-full border outline-none text-sm px-3 py-2 rounded-lg bg-transparent  focus:border-purple-500 focus:border-2"
                 name="category"
                 onChange={handleChange}
+                value={input.category}
               >
                 <option value="default">Category</option>
                 <option value="clothing">Clothing</option>
@@ -147,6 +197,8 @@ export default function AddProducts() {
               <Textarea
                 name={"description"}
                 placeholder={"Description"}
+                value={input.description}
+                onChange={handleChange}
                 color={"transparent"}
                 size={"small"}
               />
@@ -232,7 +284,9 @@ export default function AddProducts() {
               teks={"Cancel"}
               size={"small"}
               color={"light"}
-              func={clearInput}
+              func={
+                !id ? () => clearInput() : () => navigate("/dashboard/products")
+              }
             />
             <Button
               teks={"Add product"}

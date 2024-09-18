@@ -4,10 +4,16 @@ import { BsCart4 } from "react-icons/bs";
 import { IoWalletOutline } from "react-icons/io5";
 import CountCard from "../../components/layout/count-card";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import { useDataProducts, useTopSelling } from "../../services/useDataProducts";
 export default function Dashboard() {
   const auth = useAuthUser();
 
   console.log({ auth });
+
+  const { data, isFetching } = useTopSelling();
+  const { data: products } = useDataProducts();
+
+  console.log({ data });
 
   return (
     <DashboardTemplate>
@@ -15,7 +21,7 @@ export default function Dashboard() {
         <div className="w-full flex flex-col gap-4 lg:flex-row items-center">
           <CountCard
             icons={<AiOutlineProduct size={33} className="text-white" />}
-            count={112}
+            count={products ? products.length : 0}
             title={"Products"}
           />
           <CountCard
@@ -50,36 +56,30 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                <tr className=" hover:bg-gray-700 cursor-pointer hover:text-white border-b">
-                  <td className="py-4">#1</td>
-                  <th scope="row" className="px-4 py-4  ">
-                    <div className="w-[300px] h-max flex items-center gap-2 ">
-                      <img
-                        src="/celana.jpeg"
-                        alt=""
-                        className="w-[30px] h-[30px] object-cover"
-                      />
-                      Celana Cowo keren
-                    </div>
-                  </th>
-                  <td className="px-3 py-4">234</td>
-                  <td className="px-3 py-4">Rp. 2.000.000</td>
-                </tr>
-                <tr className=" hover:bg-gray-700 cursor-pointer hover:text-white border-b">
-                  <td className="py-4">#2</td>
-                  <th scope="row" className="px-4 py-4  ">
-                    <div className="w-[300px] h-max flex items-center gap-2 ">
-                      <img
-                        src="/hoddie.jpeg"
-                        alt=""
-                        className="w-[30px] h-[30px] object-cover"
-                      />
-                      Hoddie Holigans
-                    </div>
-                  </th>
-                  <td className="px-3 py-4">174</td>
-                  <td className="px-3 py-4">Rp. 120.000</td>
-                </tr>
+                {isFetching && <div>Loading...</div>}
+                {data?.length === 0 && <div>No data</div>}
+                {data?.map((item) => (
+                  <tr
+                    className=" hover:bg-gray-700 cursor-pointer hover:text-white border-b"
+                    key={item.id}
+                  >
+                    <td className="py-4">#{item.id}</td>
+                    <th scope="row" className="px-4 py-4  ">
+                      <div className="w-[300px] h-max flex items-center gap-2 ">
+                        <img
+                          src={item.image}
+                          alt=""
+                          className="w-[30px] h-[30px] object-cover"
+                        />
+                        {item.name}
+                      </div>
+                    </th>
+                    <td className="px-3 py-4">{item.sales}</td>
+                    <td className="px-3 py-4">
+                      Rp. {item.price.toLocaleString("id-ID")}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

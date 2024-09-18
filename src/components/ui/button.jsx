@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 
-const Button = ({ teks, icons, type, color, size, func }) => {
+const Button = ({ teks, icons, type, color, size, disabled, func }) => {
   return (
     <button
-      className={`w-max ${buttonColor[color]} ${buttonSize[size]}  duration-200 cursor-pointer flex items-center justify-center gap-2 `}
+      className={`w-max ${buttonColor[color]} ${buttonSize[size]}  duration-200 cursor-pointer flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50`}
       type={type}
       onClick={func}
+      disabled={disabled}
     >
       {icons}
       {teks}

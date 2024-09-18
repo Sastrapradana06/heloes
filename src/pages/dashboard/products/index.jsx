@@ -5,7 +5,7 @@ import Input from "../../../components/ui/input";
 import { MdAdd, MdDelete } from "react-icons/md";
 import { LuPencilLine } from "react-icons/lu";
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import {
   useDataProducts,
@@ -26,7 +26,7 @@ export default function Products() {
   const query = searchParams.get("query") || "";
   const category = searchParams.get("category") || "";
   const { data: alert, status, handleAlert } = useHandleAlert();
-
+  const navigate = useNavigate();
   const [setIsModalDelete] = useAppStore(
     useShallow((state) => [state.setIsModalDelete])
   );
@@ -204,7 +204,11 @@ export default function Products() {
                       </td>
                       <th scope="row" className="px-4 py-4">
                         <div className="w-max h-max flex items-center gap-2">
-                          <button>
+                          <button
+                            onClick={() =>
+                              navigate(`/dashboard/products/edit/${item.id}`)
+                            }
+                          >
                             <LuPencilLine size={20} color="green" />
                           </button>
                           <button onClick={() => showModal(item.id)}>

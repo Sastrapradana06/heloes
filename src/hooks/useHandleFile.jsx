@@ -17,5 +17,9 @@ export default function useHandleFile() {
     setUrlImg("");
   };
 
-  return { file, urlImg, handleFile, reset };
+  const editUrlImg = (url) => {
+    setUrlImg(url);
+  };
+
+  return { file, urlImg, handleFile, editUrlImg, reset };
 }

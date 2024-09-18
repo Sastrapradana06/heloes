@@ -1,7 +1,10 @@
 import { supabase } from "../supabase";
 
-export const getDataDb = async (db) => {
-  const { data, error } = await supabase.from(db).select();
+export const getDataDb = async (db, order) => {
+  const { data, error } = await supabase
+    .from(db)
+    .select()
+    .order(order, { ascending: false });
   if (error) return null;
   return data;
 };

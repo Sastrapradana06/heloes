@@ -39,6 +39,10 @@ createRoot(document.getElementById("root")).render(
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/products" element={<Products />} />
             <Route path="/dashboard/products/add" element={<AddProducts />} />
+            <Route
+              path="/dashboard/products/edit/:id"
+              element={<AddProducts />}
+            />
 
             <Route path="/dashboard/customer" element={<Customer />} />
             <Route path="/dashboard/orders" element={<Orders />} />

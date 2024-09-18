@@ -6,7 +6,7 @@ export default function useHandleInput(initialState) {
   const handleChange = (e) => {
     let { name, value } = e.target;
     if (name == "price" || name == "stock") {
-      value = parseInt(value);
+      value = parseInt(value, 10) || 0;
     }
     setData({ ...data, [name]: value });
   };
