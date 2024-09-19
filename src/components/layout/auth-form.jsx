@@ -7,19 +7,11 @@ import Input from "../ui/input";
 import Loading from "./loading";
 import { Alert, useHandleAlert } from "sstra-alert";
 import Button from "../ui/button";
-import {
-  comparePassword,
-  generateToken,
-  hashPassword,
-  setCookies,
-} from "../../utils";
-import useSignIn from "react-auth-kit/hooks/useSignIn";
-import { insertUserDB } from "../../db/dbService/insert";
-import { getDataDbWithKey } from "../../db/dbService/fetch";
+
+import { Login, SignUp } from "../../db/dbService/auth";
 
 const AuthForm = ({ formType }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const signIn = useSignIn();
   const navigate = useNavigate();
   const { status, data, handleAlert } = useHandleAlert();
 
@@ -33,81 +25,70 @@ const AuthForm = ({ formType }) => {
       .required("Email tidak boleh kosong"),
     password: Yup.string()
       .required("Password tidak boleh kosong")
-      .min(6, "Password minimal 3 karakter"),
+      .min(6, "Password minimal 6 karakter"),
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setIsLoading(true);
     const { name, email, password } = values;
-    if (formType === "register") {
-      const hashedPassword = await hashPassword(password);
-      const data = {
-        avatar: "/profile.jpeg",
-        username: name,
-        email,
-        password: hashedPassword,
-      };
+    // if (formType === "register") {
+    //   const hashedPassword = await hashPassword(password);
+    //   const data = {
+    //     avatar: "/profile.jpeg",
+    //     username: name,
+    //     email,
+    //     password: hashedPassword,
+    //   };
 
-      const insertData = await insertUserDB(data);
-      if (!insertData.status) {
+    //   const insertData = await insertUserDB(data);
+    //   if (!insertData.status) {
+    //     setIsLoading(false);
+    //     handleAlert("error", insertData.message);
+    //     setSubmitting(false);
+    //     return;
+    //   }
+
+    //   setIsLoading(false);
+    //   handleAlert("success", "Register Success");
+    //   setSubmitting(false);
+    //   navigate("/login");
+    //   return;
+    // }
+
+    if (formType === "register") {
+      const dataUser = {
+        email: email,
+        password: password,
+        username: name,
+        avatar: "/profile.jpeg",
+        role: "customer",
+      };
+      const register = await SignUp(dataUser);
+      if (!register.status) {
         setIsLoading(false);
-        handleAlert("error", insertData.message);
+        handleAlert("error", register.message);
         setSubmitting(false);
         return;
       }
-
-      setIsLoading(false);
-      handleAlert("success", "Register Success");
-      setSubmitting(false);
-      navigate("/login");
-      return;
+      console.log({ register });
     }
 
     if (formType === "login") {
-      const getData = await getDataDbWithKey("user", "email", email);
-      if (!getData) {
+      const login = await Login(email, password);
+      if (!login.status) {
         setIsLoading(false);
-        handleAlert("error", "Email tidak terdaftar");
+        handleAlert("error", "Harap periksa kembali email dan password anda");
         setSubmitting(false);
         return;
       }
-
-      const isPasswordMatch = await comparePassword(password, getData.password);
-      if (!isPasswordMatch) {
-        setIsLoading(false);
-        handleAlert("error", "harap masukkan password yang benar");
-        setSubmitting(false);
-        return;
-      }
-
-      const token = generateToken();
-
-      console.log({ getData, token });
-
-      if (
-        signIn({
-          auth: {
-            token: token,
-            type: "Bearer",
-          },
-          refresh: false,
-          userState: {
-            name: "React User",
-            uid: 123456,
-          },
-        })
-      ) {
-        setCookies("idUser", getData.id);
-        handleAlert("success", "Login berhasil");
-        navigate("/dashboard");
-        setIsLoading(false);
-      } else {
-        setIsLoading(false);
-        return handleAlert("error", "Login gagal");
-      }
-
-      setIsLoading(false);
+      handleAlert("success", "Login Success");
+      setSubmitting(false);
+      navigate("/dashboard");
+      return;
     }
+
+    setSubmitting(false);
+    setIsLoading(false);
   };
 
   return (

@@ -3,11 +3,10 @@ import DashboardTemplate from "../../components/template/dashboard-template";
 import { BsCart4 } from "react-icons/bs";
 import { IoWalletOutline } from "react-icons/io5";
 import CountCard from "../../components/layout/count-card";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { useDataProducts, useTopSelling } from "../../services/useDataProducts";
+import { isAuth } from "../../db/dbService/auth";
 export default function Dashboard() {
-  const auth = useAuthUser();
-
+  const auth = isAuth();
   console.log({ auth });
 
   const { data, isFetching } = useTopSelling();
