@@ -71,3 +71,9 @@ export const getCookies = (name) => {
   const cookies = Cookies.get(name);
   return cookies;
 };
+
+export const saveTokensToCookies = (accessToken, expiresAt) => {
+  const expirationDays =
+    (expiresAt - Math.floor(Date.now() / 1000)) / (60 * 60 * 24);
+  Cookies.set("access_token", accessToken, { expires: expirationDays });
+};

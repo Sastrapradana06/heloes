@@ -1,4 +1,4 @@
-import { supabase } from "../supabase";
+import { supabase, supabaseAdmin } from "../supabase";
 
 export const Login = async (email, password) => {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -16,7 +16,7 @@ export const Login = async (email, password) => {
     };
   }
 
-  return { status: true, message: "Success" };
+  return { status: true, message: "Success", session: data.session };
 };
 
 export const SignUp = async (userData) => {
@@ -30,6 +30,8 @@ export const SignUp = async (userData) => {
         username,
         avatar,
         role,
+        status: "aktif",
+        orders: 0,
       },
     },
   });
@@ -50,15 +52,23 @@ export const SignUp = async (userData) => {
   return { status: true, message: "Success" };
 };
 
-export const isAuth = async () => {
-  const { data, error } = await supabase.auth.getSession();
-  console.log({ data, error });
+export const User = async () => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+};
+
+export const Users = async () => {
+  const {
+    data: { users },
+    error,
+  } = await supabaseAdmin.auth.admin.listUsers();
+  console.log({ users, error });
+
   if (error) {
-    console.log({ error });
-    return {
-      status: false,
-      message: error.message,
-    };
+    throw new Error("Terjadi kesalahan");
   }
-  return { status: true, message: "Success" };
+
+  return users;
 };

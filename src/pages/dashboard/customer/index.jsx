@@ -6,9 +6,9 @@ import { CiSearch } from "react-icons/ci";
 
 import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
 import { useSearchParams } from "react-router-dom";
-import { useDataCustomers } from "../../../services/useDataCustomers";
 import Loading from "../../../components/layout/loading";
 import { formatDate } from "../../../utils";
+import { useDataUsers } from "../../../services/useDataUser";
 
 export default function Customer() {
   const [data, setData] = useState([]);
@@ -17,7 +17,9 @@ export default function Customer() {
   const query = searchParams.get("query") || "";
   const status = searchParams.get("status") || "";
 
-  const { data: customers, isFetching } = useDataCustomers();
+  const { data: customers, isFetching } = useDataUsers();
+
+  console.log({ customers });
 
   const handleSearch = () => {
     searchParams.set("query", q);
@@ -145,29 +147,31 @@ export default function Customer() {
                       <th scope="row" className="px-4 py-4">
                         <div className="w-[200px] h-max flex items-center gap-2">
                           <img
-                            src={item.avatar}
+                            src={item.user_metadata.avatar}
                             alt="cover"
                             className="w-[35px] h-[40px] object-cover rounded-md"
                           />
                           <div className="">
-                            <p>{item.username}</p>
+                            <p>{item.user_metadata.username}</p>
                             <p className="text-gray-500 text-[.7rem]">
-                              {item.email}
+                              {item.user_metadata.email}
                             </p>
                           </div>
                         </div>
                       </th>
 
-                      <td className="px-3 py-4">{item.phone}</td>
+                      <td className="px-3 py-4">
+                        {item.user_metadata.phone
+                          ? item.user_metadata.phone
+                          : "-"}
+                      </td>
                       <td className="px-3 py-4">
                         <p className="w-[100px]">
                           {formatDate(item.created_at)}
                         </p>
                       </td>
                       <td className="px-3 py-4">
-                        <div className="w-[36px] h-max ">
-                          {item.total_order.toLocaleString("id-ID")}
-                        </div>
+                        <div className="w-[36px] h-max ">{0}</div>
                       </td>
                       <td className="px-2">
                         {item.status == "aktif" ? (

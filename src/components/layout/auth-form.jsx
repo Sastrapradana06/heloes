@@ -9,6 +9,7 @@ import { Alert, useHandleAlert } from "sstra-alert";
 import Button from "../ui/button";
 
 import { Login, SignUp } from "../../db/dbService/auth";
+import { saveTokensToCookies, setCookies } from "../../utils";
 
 const AuthForm = ({ formType }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,29 +32,6 @@ const AuthForm = ({ formType }) => {
   const handleSubmit = async (values, { setSubmitting }) => {
     setIsLoading(true);
     const { name, email, password } = values;
-    // if (formType === "register") {
-    //   const hashedPassword = await hashPassword(password);
-    //   const data = {
-    //     avatar: "/profile.jpeg",
-    //     username: name,
-    //     email,
-    //     password: hashedPassword,
-    //   };
-
-    //   const insertData = await insertUserDB(data);
-    //   if (!insertData.status) {
-    //     setIsLoading(false);
-    //     handleAlert("error", insertData.message);
-    //     setSubmitting(false);
-    //     return;
-    //   }
-
-    //   setIsLoading(false);
-    //   handleAlert("success", "Register Success");
-    //   setSubmitting(false);
-    //   navigate("/login");
-    //   return;
-    // }
 
     if (formType === "register") {
       const dataUser = {
@@ -71,20 +49,24 @@ const AuthForm = ({ formType }) => {
         return;
       }
       console.log({ register });
+      navigate("/login");
     }
 
     if (formType === "login") {
-      const login = await Login(email, password);
-      if (!login.status) {
+      const { status, session } = await Login(email, password);
+      console.log({ status, session });
+
+      if (!status) {
         setIsLoading(false);
         handleAlert("error", "Harap periksa kembali email dan password anda");
         setSubmitting(false);
         return;
       }
+      saveTokensToCookies(session.access_token, session.expires_at);
+      setCookies("user_role", session.user.user_metadata.role);
       handleAlert("success", "Login Success");
       setSubmitting(false);
       navigate("/dashboard");
-      return;
     }
 
     setSubmitting(false);
@@ -109,7 +91,7 @@ const AuthForm = ({ formType }) => {
         <Formik
           initialValues={{
             name: "",
-            email: formType === "login" ? "sastra@gmail.com" : "",
+            email: formType === "login" ? "klimandai6@gmail.com" : "",
             password: formType === "login" ? "123456" : "",
           }}
           validationSchema={validationSchema}
