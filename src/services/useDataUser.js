@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { User, Users } from "../db/dbService/auth";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { CreateUser, User, Users } from "../db/dbService/auth";
 
 export const useUserLogin = () => {
   return useQuery({
@@ -15,4 +15,15 @@ export const useDataUsers = () => {
     queryFn: () => Users(),
     staleTime: 7 * 60 * 1000,
   });
+};
+
+export const useAddUser = () => {
+  const result = useMutation({
+    mutationFn: (item) => CreateUser(item),
+    onError: (error) => {
+      return error;
+    },
+  });
+
+  return result;
 };

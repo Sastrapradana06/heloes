@@ -5,10 +5,11 @@ import Button from "../../../components/ui/button";
 import { CiSearch } from "react-icons/ci";
 
 import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Loading from "../../../components/layout/loading";
 import { formatDate } from "../../../utils";
 import { useDataUsers } from "../../../services/useDataUser";
+import { MdAdd } from "react-icons/md";
 
 export default function Customer() {
   const [data, setData] = useState([]);
@@ -18,8 +19,6 @@ export default function Customer() {
   const status = searchParams.get("status") || "";
 
   const { data: customers, isFetching } = useDataUsers();
-
-  console.log({ customers });
 
   const handleSearch = () => {
     searchParams.set("query", q);
@@ -42,10 +41,10 @@ export default function Customer() {
     if (query) {
       setQ(query);
       dataCustomers = dataCustomers.filter((customer) => {
-        const name = customer.username
+        const name = customer.user_metadata.username
           .toLowerCase()
           .includes(query.toLowerCase());
-        const email = customer.email
+        const email = customer.user_metadata.email
           .toLowerCase()
           .includes(query.toLowerCase());
         return name || email;
@@ -53,7 +52,7 @@ export default function Customer() {
     }
     if (status) {
       dataCustomers = dataCustomers.filter((customer) => {
-        return customer.status == status;
+        return customer.user_metadata.status == status;
       });
     }
 
@@ -65,42 +64,56 @@ export default function Customer() {
       {isFetching && <Loading />}
       <div className="w-full  mt-1 lg:mt-0">
         <h1 className="text-[1.3rem] font-semibold">Customer</h1>
-        <div className="w-full h-max rounded-lg bg-slate-100 shadow-md mt-5 px-1 py-2 lg:p-3">
-          <div className="w-full flex flex-col gap-4 lg:flex-row-reverse lg:justify-between lg:items-center">
-            <div className="w-full flex items-center gap-2 lg:w-[40%] lg:gap-4">
-              <Input
-                type={"text"}
-                placeholder={"Search in customer"}
-                name={"search"}
-                size={"small"}
-                value={q}
-                setValue={(e) => setQ(e.target.value)}
-                color={"transparent"}
-              />
-              <Button
-                type={"button"}
-                size={"small"}
-                color={"purple"}
-                icons={<CiSearch size={20} color="white" />}
-                func={handleSearch}
-              />
+        <div className="w-full h-max rounded-lg bg-slate-100 shadow-md mt-5 px-1 py-2 lg:p-3 ">
+          <div className="w-full flex flex-col gap-4  ">
+            <div className="w-full flex flex-col  lg:items-center lg:justify-between gap-2 lg:w-full lg:flex-row lg:gap-4 ">
+              <div className="w-full lg:w-[40%] flex items-center gap-2 ">
+                <Input
+                  type={"text"}
+                  placeholder={"Search in customer"}
+                  name={"search"}
+                  size={"small"}
+                  value={q}
+                  setValue={(e) => setQ(e.target.value)}
+                  color={"transparent"}
+                />
+                <Button
+                  type={"button"}
+                  size={"small"}
+                  color={"purple"}
+                  icons={<CiSearch size={20} color="white" />}
+                  func={handleSearch}
+                />
+              </div>
+              <div className=" h-max lg:w-max borderr">
+                <select
+                  id="select"
+                  className="block  py-2 pl-3 pr-10 text-[.8rem] bg-transparent border rounded-md border-gray-400"
+                  onChange={handleFilterChangeStatus}
+                  defaultValue="default"
+                >
+                  <option value="default" disabled>
+                    Filter berdasarkan status
+                  </option>
+                  <option value="semua">Semua</option>
+                  <option value="aktif">Aktif</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
             </div>
-            <div className=" h-max lg:w-max borderr">
-              <select
-                id="select"
-                className="block  py-2 pl-3 pr-10 text-[.8rem] bg-transparent border rounded-md border-gray-400"
-                onChange={handleFilterChangeStatus}
-                defaultValue="default"
-              >
-                <option value="default" disabled>
-                  Filter berdasarkan status
-                </option>
-                <option value="semua">Semua</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
+            <div className="w-max">
+              <Link to={"/dashboard/customer/add"}>
+                <Button
+                  teks={"Add Customer"}
+                  type={"button"}
+                  size={"small"}
+                  color={"green"}
+                  icons={<MdAdd size={20} color="white" />}
+                />
+              </Link>
             </div>
           </div>
+
           <div className="relative overflow-auto mt-6 min-h-max max-h-[450px]">
             <table className="w-full text-sm text-left text-gray-700">
               <thead className="text-xs uppercase bg-slate-200 border-b">
@@ -174,7 +187,7 @@ export default function Customer() {
                         <div className="w-[36px] h-max ">{0}</div>
                       </td>
                       <td className="px-2">
-                        {item.status == "aktif" ? (
+                        {item.user_metadata.status == "aktif" ? (
                           <div className="w-[15px] h-[15px] rounded-full bg-green-500 m-auto lg:ml-5"></div>
                         ) : (
                           <div className="w-[15px] h-[15px] rounded-full bg-red-500 m-auto lg:ml-5"></div>
@@ -182,7 +195,7 @@ export default function Customer() {
                       </td>
 
                       <th scope="row" className="px-4 py-4">
-                        {item.status == "aktif" ? (
+                        {item.user_metadata.status == "aktif" ? (
                           <button
                             className="p-2 rounded-md bg-red-500"
                             title="non aktifkan akun"

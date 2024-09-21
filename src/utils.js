@@ -62,9 +62,11 @@ export const setCookies = (name, data) => {
   Cookies.set(name, data, { expires: now });
 };
 
-export const deleteCookies = () => {
-  Cookies.remove("token");
-  Cookies.remove("idUser");
+export const deleteAllCookies = () => {
+  const allCookies = Cookies.get();
+  Object.keys(allCookies).forEach((cookieName) => {
+    Cookies.remove(cookieName);
+  });
 };
 
 export const getCookies = (name) => {

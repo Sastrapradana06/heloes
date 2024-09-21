@@ -1,12 +1,12 @@
+import { deleteAllCookies } from "../../utils";
 import { supabase, supabaseAdmin } from "../supabase";
+import { uploadFile } from "./file";
 
 export const Login = async (email, password) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email,
     password: password,
   });
-
-  console.log({ data, error });
 
   if (error) {
     console.log({ error });
@@ -20,9 +20,8 @@ export const Login = async (email, password) => {
 };
 
 export const SignUp = async (userData) => {
-  console.log({ userData });
   const { email, password, username, avatar, role } = userData;
-  const { data, error } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email: email,
     password: password,
     options: {
@@ -36,20 +35,18 @@ export const SignUp = async (userData) => {
     },
   });
 
-  console.log({ data, error });
-
   if (error) {
     console.log({ error });
     return {
       status: false,
       message:
-        error.status == 429
-          ? "Batas maksimal request terlampaui"
-          : "Terjadi kesalahan",
+        error.status == 422
+          ? "Email already exist"
+          : "Sign up failed, please try again",
     };
   }
 
-  return { status: true, message: "Success" };
+  return { status: true, message: "Sign up successful" };
 };
 
 export const User = async () => {
@@ -64,11 +61,61 @@ export const Users = async () => {
     data: { users },
     error,
   } = await supabaseAdmin.auth.admin.listUsers();
-  console.log({ users, error });
 
   if (error) {
     throw new Error("Terjadi kesalahan");
   }
 
-  return users;
+  const selectCustomers = users.filter(
+    (item) => item.user_metadata.role !== "super admin"
+  );
+
+  return selectCustomers;
+};
+
+export const Signout = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    throw new Error("Terjadi kesalahan");
+  }
+
+  deleteAllCookies();
+};
+
+export const CreateUser = async (data) => {
+  console.log({ data });
+
+  if (data.fileImg) {
+    const upload = await uploadFile("avatar", data.fileImg);
+    if (upload.status) {
+      data.avatar = upload.url;
+    }
+    delete data.fileImg;
+  }
+
+  const { data: user, error } = await supabaseAdmin.auth.admin.createUser({
+    email: data.email,
+    password: data.password,
+    email_confirm: true,
+    user_metadata: {
+      avatar: data.avatar,
+      username: data.username,
+      email: data.email,
+      address: data.address,
+      phone: data.phone,
+      role: data.role,
+      status: "aktif",
+      ...(data.role == "customer" && { orders: 0 }),
+    },
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return {
+    status: true,
+    message: "Success",
+    user,
+  };
 };

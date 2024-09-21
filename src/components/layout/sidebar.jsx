@@ -12,6 +12,8 @@ import { BsHandbag } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa";
 import { BsCart4 } from "react-icons/bs";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { GoSignOut } from "react-icons/go";
+import { Signout } from "../../db/dbService/auth";
 
 export default function Sidebar() {
   const [isCategory, setIsCategory] = useState(false);
@@ -155,20 +157,19 @@ export default function Sidebar() {
             }
           />
 
-          {/* <li>
-            <button
-              onClick={async () => signOut()}
-              className="flex items-center gap-3 w-full p-2 text-base  transition duration-75 rounded-lg    hover:bg-purple-200 "
-            >
-              <GoSignOut
-                size={25}
-                className="text-purple-400 lg:text-purple-700"
-              />
-              <span className="capitalize text-white lg:text-gray-700">
-                Sign Out
-              </span>
-            </button>
-          </li> */}
+          <button
+            onClick={async () => Signout()}
+            type="button"
+            className="flex items-center w-full p-2 text-base  transition duration-75 rounded-lg group   hover:bg-purple-200"
+          >
+            <GoSignOut
+              size={23}
+              className="text-purple-400 lg:text-purple-700"
+            />
+            <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap text-white lg:text-gray-700 text-[.9rem]">
+              Sign out
+            </span>
+          </button>
         </ul>
       </div>
     </div>

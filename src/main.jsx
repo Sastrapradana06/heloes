@@ -16,6 +16,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import createStore from "react-auth-kit/createStore";
 import AuthProvider from "react-auth-kit";
 import PrivateRoute from "./components/template/PrivateRoute.jsx";
+import AddCustomer from "./pages/dashboard/customer/add-customer.jsx";
 // import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
 export const store = createStore({
   authName: "_auth",
@@ -37,7 +38,9 @@ createRoot(document.getElementById("root")).render(
             <Route path="/register" element={<Register />} />
 
             <Route
-              element={<PrivateRoute allowedJabatan={["admin", "customer"]} />}
+              element={
+                <PrivateRoute allowedJabatan={["super admin", "admin"]} />
+              }
             >
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/products" element={<Products />} />
@@ -48,6 +51,8 @@ createRoot(document.getElementById("root")).render(
               />
 
               <Route path="/dashboard/customer" element={<Customer />} />
+              <Route path="/dashboard/customer/add" element={<AddCustomer />} />
+
               <Route path="/dashboard/orders" element={<Orders />} />
               <Route path="/dashboard/orders/:id" element={<DetailOrder />} />
             </Route>

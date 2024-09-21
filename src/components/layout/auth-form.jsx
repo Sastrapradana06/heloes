@@ -10,11 +10,13 @@ import Button from "../ui/button";
 
 import { Login, SignUp } from "../../db/dbService/auth";
 import { saveTokensToCookies, setCookies } from "../../utils";
+import { useInvalidate } from "../../services/useDataProducts";
 
 const AuthForm = ({ formType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { status, data, handleAlert } = useHandleAlert();
+  const { invalidateListQuery } = useInvalidate();
 
   const validationSchema = Yup.object().shape({
     name:
@@ -43,28 +45,31 @@ const AuthForm = ({ formType }) => {
       };
       const register = await SignUp(dataUser);
       if (!register.status) {
-        setIsLoading(false);
         handleAlert("error", register.message);
+        setIsLoading(false);
         setSubmitting(false);
         return;
       }
       console.log({ register });
-      navigate("/login");
+      handleAlert("success", register.message);
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
     }
 
     if (formType === "login") {
       const { status, session } = await Login(email, password);
-      console.log({ status, session });
 
       if (!status) {
         setIsLoading(false);
-        handleAlert("error", "Harap periksa kembali email dan password anda");
+        handleAlert("error", "Please check your email and password");
         setSubmitting(false);
         return;
       }
       saveTokensToCookies(session.access_token, session.expires_at);
       setCookies("user_role", session.user.user_metadata.role);
       handleAlert("success", "Login Success");
+      invalidateListQuery("data-customers");
       setSubmitting(false);
       navigate("/dashboard");
     }
@@ -91,7 +96,7 @@ const AuthForm = ({ formType }) => {
         <Formik
           initialValues={{
             name: "",
-            email: formType === "login" ? "klimandai6@gmail.com" : "",
+            email: formType === "login" ? "superadmin@gmail.com" : "",
             password: formType === "login" ? "123456" : "",
           }}
           validationSchema={validationSchema}
