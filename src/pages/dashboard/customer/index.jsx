@@ -8,7 +8,11 @@ import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
 import { Link, useSearchParams } from "react-router-dom";
 import Loading from "../../../components/layout/loading";
 import { formatDate } from "../../../utils";
-import { useDataUsers, useDeleteUser } from "../../../services/useDataUser";
+import {
+  useDataUsers,
+  useDeleteUser,
+  useUpdateStatus,
+} from "../../../services/useDataUser";
 import { MdAdd } from "react-icons/md";
 import { BiTrash } from "react-icons/bi";
 import { useInvalidate } from "../../../services/useDataProducts";
@@ -33,7 +37,24 @@ export default function Customer() {
 
   const { data: customers, isFetching } = useDataUsers();
   const { mutate, isPending } = useDeleteUser();
+  const updateStatus = useUpdateStatus();
   const { invalidateListQuery } = useInvalidate();
+
+  const handleStatus = (id, status) => {
+    updateStatus.mutate(
+      { id, status },
+      {
+        onSuccess: () => {
+          handleAlert("success", "Status updated successfully");
+          invalidateListQuery("data-customers");
+        },
+        onError: (error) => {
+          console.log({ error });
+          handleAlert("error", "Terjadi kesalahan");
+        },
+      }
+    );
+  };
 
   const deleteCustomer = () => {
     mutate(idDelete, {
@@ -97,7 +118,7 @@ export default function Customer() {
   return (
     <DashboardTemplate>
       <>
-        {isFetching || (isPending && <Loading />)}
+        {(isFetching || isPending || updateStatus.isPending) && <Loading />}
         <ModalDelete handleDelete={deleteCustomer} />
         <Alert
           status={alertStatus}
@@ -245,9 +266,15 @@ export default function Customer() {
                       </td>
                       <td className="px-2">
                         {item.user_metadata.status == "aktif" ? (
-                          <div className="w-[15px] h-[15px] rounded-full bg-green-500 m-auto lg:ml-5"></div>
+                          <div
+                            className="w-[15px] h-[15px] rounded-full bg-green-500 m-auto lg:ml-5"
+                            title="aktif"
+                          ></div>
                         ) : (
-                          <div className="w-[15px] h-[15px] rounded-full bg-red-500 m-auto lg:ml-5"></div>
+                          <div
+                            className="w-[15px] h-[15px] rounded-full bg-red-500 m-auto lg:ml-5"
+                            title="inactive"
+                          ></div>
                         )}
                       </td>
 
@@ -255,6 +282,9 @@ export default function Customer() {
                         <div className="flex items-center gap-2">
                           {item.user_metadata.status == "aktif" ? (
                             <button
+                              onClick={() =>
+                                handleStatus(item.id, item.user_metadata.status)
+                              }
                               className="p-2 rounded-md bg-orange-500"
                               title="non aktifkan akun"
                             >
@@ -262,6 +292,9 @@ export default function Customer() {
                             </button>
                           ) : (
                             <button
+                              onClick={() =>
+                                handleStatus(item.id, item.user_metadata.status)
+                              }
                               className="p-2 rounded-md bg-green-500"
                               title="aktifkan akun"
                             >

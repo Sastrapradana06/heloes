@@ -12,11 +12,20 @@ export const Login = async (email, password) => {
     console.log({ error });
     return {
       status: false,
-      message: error.message,
+      message: "Please check your email and password",
     };
   }
 
-  return { status: true, message: "Success", session: data.session };
+  const { session, user } = data;
+
+  if (user.user_metadata.status !== "aktif") {
+    return {
+      status: false,
+      message: "Your account is frozen, please contact the store admin",
+    };
+  }
+
+  return { status: true, message: "Success", session: session };
 };
 
 export const SignUp = async (userData) => {
@@ -83,8 +92,6 @@ export const Signout = async () => {
 };
 
 export const CreateUser = async (data) => {
-  console.log({ data });
-
   if (data.fileImg) {
     const upload = await uploadFile("avatar", data.fileImg);
     if (upload.status) {
@@ -120,7 +127,7 @@ export const CreateUser = async (data) => {
   };
 };
 
-export const deleteUser = async (id) => {
+export const DeleteUser = async (id) => {
   const { data, error } = await supabaseAdmin.auth.admin.getUserById(id);
 
   if (error) {
@@ -150,5 +157,19 @@ export const deleteUser = async (id) => {
     status: true,
     message: "Pengguna berhasil dihapus",
     user: data,
+  };
+};
+
+export const UpdateStatusUser = async (id, userStatus) => {
+  const { error } = await supabaseAdmin.auth.admin.updateUserById(id, {
+    user_metadata: { status: userStatus == "aktif" ? "inactive" : "aktif" },
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  return {
+    status: true,
+    message: "Success",
   };
 };

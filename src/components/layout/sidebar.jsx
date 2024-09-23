@@ -2,7 +2,6 @@ import { IoCloseSharp } from "react-icons/io5";
 import { BiCategoryAlt } from "react-icons/bi";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useState } from "react";
-// import { GoSignOut } from "react-icons/go";
 import { IoStorefrontSharp } from "react-icons/io5";
 import { PiHandsClapping } from "react-icons/pi";
 import { useShallow } from "zustand/react/shallow";
@@ -26,6 +25,8 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   const handleNavigate = (url) => {
+    setIsSidebarOpen(false);
+
     if (url === "semua") {
       searchParams.delete("category");
     }

@@ -8,9 +8,9 @@ import Loading from "./loading";
 import { Alert, useHandleAlert } from "sstra-alert";
 import Button from "../ui/button";
 
-import { Login, SignUp } from "../../db/dbService/auth";
 import { saveTokensToCookies, setCookies } from "../../utils";
 import { useInvalidate } from "../../services/useDataProducts";
+import { Login, SignUp } from "../../db/dbService/admin";
 
 const AuthForm = ({ formType }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -58,11 +58,11 @@ const AuthForm = ({ formType }) => {
     }
 
     if (formType === "login") {
-      const { status, session } = await Login(email, password);
+      const { status, message, session } = await Login(email, password);
 
       if (!status) {
         setIsLoading(false);
-        handleAlert("error", "Please check your email and password");
+        handleAlert("error", message);
         setSubmitting(false);
         return;
       }
@@ -70,6 +70,8 @@ const AuthForm = ({ formType }) => {
       setCookies("user_role", session.user.user_metadata.role);
       handleAlert("success", "Login Success");
       invalidateListQuery("data-customers");
+      invalidateListQuery("user");
+
       setSubmitting(false);
       navigate("/dashboard");
     }

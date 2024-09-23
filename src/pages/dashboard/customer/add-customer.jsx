@@ -33,7 +33,7 @@ export default function AddCustomer() {
     editData,
     clearInput,
   } = useHandleInput({
-    avatar: "",
+    avatar: "/profile.jpeg",
     username: "",
     gender: "",
     address: "",

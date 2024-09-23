@@ -1,5 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CreateUser, DeleteUser, User, Users } from "../db/dbService/admin";
+import {
+  CreateUser,
+  DeleteUser,
+  UpdateStatusUser,
+  User,
+  Users,
+} from "../db/dbService/admin";
 
 export const useUserLogin = () => {
   return useQuery({
@@ -31,6 +37,17 @@ export const useAddUser = () => {
 export const useDeleteUser = () => {
   const result = useMutation({
     mutationFn: (id) => DeleteUser(id),
+    onError: (error) => {
+      return error;
+    },
+  });
+
+  return result;
+};
+
+export const useUpdateStatus = () => {
+  const result = useMutation({
+    mutationFn: (data) => UpdateStatusUser(data.id, data.status),
     onError: (error) => {
       return error;
     },
