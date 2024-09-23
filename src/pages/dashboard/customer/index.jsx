@@ -8,17 +8,52 @@ import { IoLockClosedOutline, IoLockOpenOutline } from "react-icons/io5";
 import { Link, useSearchParams } from "react-router-dom";
 import Loading from "../../../components/layout/loading";
 import { formatDate } from "../../../utils";
-import { useDataUsers } from "../../../services/useDataUser";
+import { useDataUsers, useDeleteUser } from "../../../services/useDataUser";
 import { MdAdd } from "react-icons/md";
+import { BiTrash } from "react-icons/bi";
+import { useInvalidate } from "../../../services/useDataProducts";
+import { useAppStore } from "../../../store";
+import { useShallow } from "zustand/react/shallow";
+import { Alert, useHandleAlert } from "sstra-alert";
+import ModalDelete from "../../../components/layout/modal-delete";
 
 export default function Customer() {
   const [data, setData] = useState([]);
+  const [idDelete, setIdDelete] = useState(null);
+  const [setIsModalDelete] = useAppStore(
+    useShallow((state) => [state.setIsModalDelete])
+  );
+
+  const { data: alert, status: alertStatus, handleAlert } = useHandleAlert();
+
   const [q, setQ] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
   const status = searchParams.get("status") || "";
 
   const { data: customers, isFetching } = useDataUsers();
+  const { mutate, isPending } = useDeleteUser();
+  const { invalidateListQuery } = useInvalidate();
+
+  const deleteCustomer = () => {
+    mutate(idDelete, {
+      onSuccess: () => {
+        setIsModalDelete(false);
+        handleAlert("success", "Customer deleted successfully");
+        invalidateListQuery("data-customers");
+      },
+      onError: (error) => {
+        console.log({ error });
+        setIsModalDelete(false);
+        handleAlert("error", "Terjadi kesalahan");
+      },
+    });
+  };
+
+  const showModal = (id) => {
+    setIdDelete(id);
+    setIsModalDelete(true);
+  };
 
   const handleSearch = () => {
     searchParams.set("query", q);
@@ -61,7 +96,16 @@ export default function Customer() {
 
   return (
     <DashboardTemplate>
-      {isFetching && <Loading />}
+      <>
+        {isFetching || (isPending && <Loading />)}
+        <ModalDelete handleDelete={deleteCustomer} />
+        <Alert
+          status={alertStatus}
+          type={alert.type}
+          message={alert.message}
+          background={"bg-gray-600"}
+        />
+      </>
       <div className="w-full  mt-1 lg:mt-0">
         <h1 className="text-[1.3rem] font-semibold">Customer</h1>
         <div className="w-full h-max rounded-lg bg-slate-100 shadow-md mt-5 px-1 py-2 lg:p-3 ">
@@ -122,7 +166,10 @@ export default function Customer() {
                     Id
                   </th>
                   <th scope="col" className="px-4 py-3">
-                    Customer
+                    Username
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Role
                   </th>
                   <th scope="col" className="px-3 py-3">
                     Phone
@@ -172,7 +219,17 @@ export default function Customer() {
                           </div>
                         </div>
                       </th>
-
+                      <td className="px-3 py-4">
+                        <p
+                          className={`w-[80px] capitalize font-semibold ${
+                            item.user_metadata.role == "admin"
+                              ? "text-red-500"
+                              : "text-green-500"
+                          }`}
+                        >
+                          {item.user_metadata.role}
+                        </p>
+                      </td>
                       <td className="px-3 py-4">
                         {item.user_metadata.phone
                           ? item.user_metadata.phone
@@ -195,21 +252,30 @@ export default function Customer() {
                       </td>
 
                       <th scope="row" className="px-4 py-4">
-                        {item.user_metadata.status == "aktif" ? (
+                        <div className="flex items-center gap-2">
+                          {item.user_metadata.status == "aktif" ? (
+                            <button
+                              className="p-2 rounded-md bg-orange-500"
+                              title="non aktifkan akun"
+                            >
+                              <IoLockOpenOutline size={20} color="white" />
+                            </button>
+                          ) : (
+                            <button
+                              className="p-2 rounded-md bg-green-500"
+                              title="aktifkan akun"
+                            >
+                              <IoLockClosedOutline size={20} color="white" />
+                            </button>
+                          )}
                           <button
                             className="p-2 rounded-md bg-red-500"
-                            title="non aktifkan akun"
+                            onClick={() => showModal(item.id)}
+                            title="delete akun"
                           >
-                            <IoLockOpenOutline size={20} color="white" />
+                            <BiTrash size={20} color="white" />
                           </button>
-                        ) : (
-                          <button
-                            className="p-2 rounded-md bg-green-500"
-                            title="aktifkan akun"
-                          >
-                            <IoLockClosedOutline size={20} color="white" />
-                          </button>
-                        )}
+                        </div>
                       </th>
                     </tr>
                   ))

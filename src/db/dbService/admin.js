@@ -1,6 +1,6 @@
-import { deleteAllCookies } from "../../utils";
+import { deleteAllCookies, extractFilePath } from "../../utils";
 import { supabase, supabaseAdmin } from "../supabase";
-import { uploadFile } from "./file";
+import { deleteFile, uploadFile } from "./file";
 
 export const Login = async (email, password) => {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -117,5 +117,38 @@ export const CreateUser = async (data) => {
     status: true,
     message: "Success",
     user,
+  };
+};
+
+export const deleteUser = async (id) => {
+  const { data, error } = await supabaseAdmin.auth.admin.getUserById(id);
+
+  if (error) {
+    throw new Error("Terjadi kesalahan saat mengambil data user");
+  }
+
+  const avatar = data.user.user_metadata.avatar;
+
+  if (avatar && avatar !== "profile.jpeg") {
+    const urlAvatar = extractFilePath("avatar", avatar);
+    const deleteAvatar = await deleteFile("avatar", urlAvatar);
+
+    if (!deleteAvatar) {
+      throw new Error("Terjadi kesalahan saat menghapus avatar");
+    }
+  }
+
+  const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(id);
+
+  if (deleteError) {
+    throw new Error(
+      `Terjadi kesalahan saat menghapus user: ${deleteError.message}`
+    );
+  }
+
+  return {
+    status: true,
+    message: "Pengguna berhasil dihapus",
+    user: data,
   };
 };

@@ -26,3 +26,15 @@ export async function uploadFile(folder, file) {
     url: data.publicUrl,
   };
 }
+
+export const deleteFile = async (folder, url) => {
+  const { error } = await supabase.storage
+    .from("heloess")
+    .remove([`${folder}/${url}`]);
+
+  if (error) {
+    console.log(error);
+    return false;
+  }
+  return true;
+};

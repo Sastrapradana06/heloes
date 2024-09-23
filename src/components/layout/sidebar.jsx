@@ -13,7 +13,7 @@ import { FaUsers } from "react-icons/fa";
 import { BsCart4 } from "react-icons/bs";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { GoSignOut } from "react-icons/go";
-import { Signout } from "../../db/dbService/auth";
+import { Signout } from "../../db/dbService/admin";
 
 export default function Sidebar() {
   const [isCategory, setIsCategory] = useState(false);

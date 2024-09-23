@@ -1,5 +1,17 @@
 import bcrypt from "bcryptjs";
 import Cookies from "js-cookie";
+export function extractFilePath(folder, url) {
+  const newUrl = url.replace(
+    `https://norsqmqzzlsyhihnjjyg.supabase.co/storage/v1/object/public/heloess/${folder}/`,
+    ""
+  );
+  if (newUrl.includes("%20")) {
+    const result = newUrl.replace("%20", " ");
+    return result;
+  } else {
+    return newUrl;
+  }
+}
 export function formatDate(dateString) {
   const bulan = [
     "Jan",
