@@ -3,6 +3,7 @@ import {
   CreateUser,
   DeleteUser,
   UpdateStatusUser,
+  UpdateUser,
   User,
   Users,
 } from "../db/dbService/admin";
@@ -48,6 +49,17 @@ export const useDeleteUser = () => {
 export const useUpdateStatus = () => {
   const result = useMutation({
     mutationFn: (data) => UpdateStatusUser(data.id, data.status),
+    onError: (error) => {
+      return error;
+    },
+  });
+
+  return result;
+};
+
+export const useUpdateUser = () => {
+  const result = useMutation({
+    mutationFn: (data) => UpdateUser(data),
     onError: (error) => {
       return error;
     },

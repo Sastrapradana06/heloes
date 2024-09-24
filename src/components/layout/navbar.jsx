@@ -23,21 +23,21 @@ export default function Navbar() {
       <div className="w-max h-max flex items-center gap-2">
         <div className="w-max h-max flex flex-col ">
           <p className="text-[1rem] capitalize font-semibold -mb-1 ">
-            {isPending ? "" : user.user_metadata.username}
+            {isPending ? "" : user?.user_metadata.username}
           </p>
           <span
             className={`text-[.8rem] text-end ${
-              user.user_metadata.role == "super admin"
+              user?.user_metadata.role == "super admin"
                 ? "text-red-500"
                 : "text-green-500"
             }`}
           >
-            {isPending ? "" : user.user_metadata.role}
+            {isPending ? "" : user?.user_metadata.role}
           </span>
         </div>
         <div className="w-max h-max ">
           <img
-            src={isPending ? "" : user.user_metadata.avatar}
+            src={isPending ? "" : user?.user_metadata.avatar}
             alt="img_profile"
             className="w-9 h-9 object-cover rounded-lg"
           />

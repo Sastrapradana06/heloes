@@ -2,7 +2,6 @@ import { IoCloseSharp } from "react-icons/io5";
 import { BiCategoryAlt } from "react-icons/bi";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useState } from "react";
-import { IoStorefrontSharp } from "react-icons/io5";
 import { PiHandsClapping } from "react-icons/pi";
 import { useShallow } from "zustand/react/shallow";
 import ListMenu from "../ui/list-menu";
@@ -13,6 +12,7 @@ import { BsCart4 } from "react-icons/bs";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { GoSignOut } from "react-icons/go";
 import { Signout } from "../../db/dbService/admin";
+import { IoIosSettings } from "react-icons/io";
 
 export default function Sidebar() {
   const [isCategory, setIsCategory] = useState(false);
@@ -148,10 +148,10 @@ export default function Sidebar() {
           />
 
           <ListMenu
-            link="#"
-            teks="Store"
+            link="/dashboard/setting"
+            teks="Setting"
             icons1={
-              <IoStorefrontSharp
+              <IoIosSettings
                 size={23}
                 className="text-purple-400 lg:text-purple-700"
               />

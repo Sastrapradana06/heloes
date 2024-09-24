@@ -173,3 +173,30 @@ export const UpdateStatusUser = async (id, userStatus) => {
     message: "Success",
   };
 };
+
+export const UpdateUser = async (data) => {
+  const updateData = {
+    email: data.email,
+    user_metadata: {
+      username: data.username,
+      phone: data.phone,
+      address: data.address,
+    },
+  };
+
+  if (data.password !== "") {
+    updateData.password = data.password;
+  }
+
+  const { data: user, error } = await supabaseAdmin.auth.admin.updateUserById(
+    data.id,
+    updateData
+  );
+  console.log({ user, error });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return { user };
+};
