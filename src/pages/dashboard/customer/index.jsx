@@ -285,7 +285,7 @@ export default function Customer() {
                               onClick={() =>
                                 handleStatus(item.id, item.user_metadata.status)
                               }
-                              className="p-2 rounded-md bg-orange-500"
+                              className="p-2 rounded-md bg-yellow-500"
                               title="non aktifkan akun"
                             >
                               <IoLockOpenOutline size={20} color="white" />

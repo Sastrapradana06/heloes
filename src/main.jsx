@@ -18,6 +18,7 @@ import AuthProvider from "react-auth-kit";
 import PrivateRoute from "./components/template/PrivateRoute.jsx";
 import AddCustomer from "./pages/dashboard/customer/add-customer.jsx";
 import Setting from "./pages/dashboard/setting/index.jsx";
+import Home from "./pages/app/home/index.jsx";
 // import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
 export const store = createStore({
   authName: "_auth",
@@ -59,10 +60,12 @@ createRoot(document.getElementById("root")).render(
 
               <Route path="/dashboard/setting" element={<Setting />} />
             </Route>
+
+            <Route path="/app" element={<Home />} />
           </Routes>
         </BrowserRouter>
       </StrictMode>
-      <ReactQueryDevtools initialIsOpen={true} />
+      {/* <ReactQueryDevtools initialIsOpen={true} /> */}
     </QueryClientProvider>
   </AuthProvider>
 );

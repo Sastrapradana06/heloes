@@ -73,7 +73,14 @@ const AuthForm = ({ formType }) => {
       invalidateListQuery("user");
 
       setSubmitting(false);
-      navigate("/dashboard");
+      navigate(
+        `${
+          session.user.user_metadata.role == "super admin" ||
+          session.user.user_metadata.role == "admin"
+            ? "/dashboard"
+            : "/app"
+        }`
+      );
     }
 
     setSubmitting(false);
