@@ -9,6 +9,16 @@ export const getDataDb = async (db, order) => {
   return data;
 };
 
+export const getTopSelling = async () => {
+  const { data, error } = await supabase
+    .from("products")
+    .select()
+    .order("sales", { ascending: false });
+  if (error) return null;
+  const filter = data.filter((item) => item.sales !== 0);
+  return filter;
+};
+
 export const getDataDbWithKey = async (db, key, value) => {
   const { data, error } = await supabase.from(db).select().eq(key, value);
 

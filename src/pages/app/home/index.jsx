@@ -2,11 +2,16 @@
 import { AiOutlineProduct } from "react-icons/ai";
 import { BsCart4 } from "react-icons/bs";
 import { GoHomeFill } from "react-icons/go";
-import { IoHeartCircleSharp } from "react-icons/io5";
+import { IoHeart, IoHeartCircleSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Input from "../../../components/ui/input";
 import { TbListSearch } from "react-icons/tb";
 import Button from "../../../components/ui/button";
+import { LuPlus } from "react-icons/lu";
+import {
+  useDataProducts,
+  useTopSelling,
+} from "../../../services/useDataProducts";
 
 export default function Home() {
   const ListLink = ({ teks, href }) => {
@@ -17,8 +22,83 @@ export default function Home() {
     );
   };
 
+  const CardProduct = ({ image, name, price }) => {
+    return (
+      <div className="w-[170px] h-[200px] bg-slate-100 shadow-lg rounded-xl p-2">
+        <img
+          src={image}
+          alt="img_items"
+          className="w-full h-[130px] rounded-xl object-cover m-auto"
+        />
+        <h1 className="text-[.8rem] text-yellow-500 font-semibold mt-2 capitalize">
+          {name}
+        </h1>
+        <div className="w-full flex justify-between items-center">
+          <p className="text-[.8rem] ">Rp. {price.toLocaleString("id-ID")}</p>
+          <button className="p-1 rounded-full bg-gray-600 shadow-lg">
+            <LuPlus size={18} color="white" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const CardPopularProduct = ({ image, name, price }) => {
+    return (
+      <div className="w-[220px] h-[90px] rounded-xl shadow-lg bg-slate-100 flex items-center justify-between p-2 lg:w-full">
+        <img
+          src={image}
+          alt="img"
+          className="w-[30%] h-full rounded-xl object-cover"
+        />
+        <div className="w-[65%]">
+          <h1 className="text-[.8rem] text-yellow-500 font-semibold mt-2 capitalize">
+            {name}
+          </h1>
+          <div className="w-full flex items-center justify-between mt-2">
+            <p className="text-[.8rem] ">Rp. {price.toLocaleString("id-ID")}</p>
+            <button className="">
+              <IoHeart size={20} fill="black" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const CardProductSkeleton = () => {
+    return (
+      <div className="w-[170px] h-[200px] bg-slate-100 shadow-lg rounded-xl p-2 animate-pulse">
+        <div className="w-full h-[130px] bg-gray-300 rounded-xl m-auto"></div>
+        <div className="w-full h-[20px] mt-2 bg-gray-300 rounded"></div>
+        <div className="w-full flex justify-between items-center mt-2">
+          <div className="w-1/2 h-[18px] bg-gray-300 rounded"></div>
+          <div className="p-1 w-[20px] h-[20px] bg-gray-300 rounded-full shadow-lg"></div>
+        </div>
+      </div>
+    );
+  };
+
+  const CardPopularProductSkeleton = () => {
+    return (
+      <div className="w-[220px] h-[90px] rounded-xl shadow-lg bg-slate-100 flex items-center justify-between p-2 animate-pulse">
+        <div className="w-[30%] h-full bg-gray-300 rounded-xl"></div>
+        <div className="w-[65%]">
+          <div className="w-full h-[16px] bg-gray-300 rounded mt-2"></div>
+          <div className="w-full flex items-center justify-between mt-2">
+            <div className="w-[50px] h-[16px] bg-gray-300 rounded"></div>
+            <div className="w-[20px] h-[20px] bg-gray-300 rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const { data: products, isLoading } = useDataProducts();
+  const { data: topSelling, isLoading: isLoadingTop } = useTopSelling();
+
   return (
-    <main className="w-full min-h-[100vh] max-h-max pb-4 relative ">
+    <main className="w-full min-h-[100vh] max-h-max pb-[100px] relative ">
       <nav className="w-full h-[70px] p-3 fixed top-0 left-0  bg-[#ffffff49] backdrop-blur-[5px] flex items-center justify-between lg:p-8">
         <div className="w-max">
           <h1 className="lg:text-[1.1rem] font-semibold">
@@ -61,7 +141,7 @@ export default function Home() {
           </div>
         </div>
         <div className="w-full mt-8  flex flex-col lg:flex-row lg:justify-between gap-4">
-          <div className="w-full h-[200px] lg:w-[50%] ">
+          <div className="w-full h-max lg:w-[50%] ">
             <div className="w-full overflow-x-auto flex items-center gap-6">
               <Button
                 type={"button"}
@@ -88,9 +168,39 @@ export default function Home() {
                 color={"dark"}
               />
             </div>
+            <div className="w-full overflow-x-scroll flex items-center gap-4 mt-4 pb-2  lg:overflow-x-hidden lg:flex-wrap lg:h-[400px] lg:items-start ">
+              {isLoading ? (
+                <CardProductSkeleton />
+              ) : (
+                products?.map((items) => (
+                  <div key={items.id} className="min-w-[170px]">
+                    <CardProduct
+                      image={items.image}
+                      name={items.name}
+                      price={items.price}
+                    />
+                  </div>
+                ))
+              )}
+            </div>
           </div>
           <div className="w-full lg:w-[50%] ">
             <h1 className="text-gray-600 text-[1.1rem]">Popular Products</h1>
+            <div className="w-full overflow-x-scroll mt-4 flex items-center gap-4 lg:flex-wrap lg:overflow-x-hidden lg:max-h-[400px] lg:items-start lg:justify-center lg:gap-5 ">
+              {isLoadingTop ? (
+                <CardPopularProductSkeleton />
+              ) : (
+                topSelling?.map((items) => (
+                  <div key={items.id} className="min-w-[220px] lg:w-[45%] ">
+                    <CardPopularProduct
+                      image={items.image}
+                      name={items.name}
+                      price={items.price}
+                    />
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </section>

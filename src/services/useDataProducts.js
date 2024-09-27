@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getDataDb } from "../db/dbService/fetch";
+import { getDataDb, getTopSelling } from "../db/dbService/fetch";
 import { insertProductDB } from "../db/dbService/insert";
 import { deleteDataDb } from "../db/dbService/delete";
 import { updateDataDB } from "../db/dbService/update";
@@ -25,7 +25,7 @@ export const useDataProducts = () => {
 export const useTopSelling = () => {
   return useQuery({
     queryKey: ["top-selling"],
-    queryFn: () => getDataDb("products", "sales"),
+    queryFn: () => getTopSelling(),
     staleTime: 5 * 60 * 1000,
   });
 };
