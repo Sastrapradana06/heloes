@@ -19,6 +19,7 @@ import PrivateRoute from "./components/template/PrivateRoute.jsx";
 import AddCustomer from "./pages/dashboard/customer/add-customer.jsx";
 import Setting from "./pages/dashboard/setting/index.jsx";
 import Home from "./pages/app/home/index.jsx";
+import AppProducts from "./pages/app/produts/index.jsx";
 // import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
 export const store = createStore({
   authName: "_auth",
@@ -62,6 +63,7 @@ createRoot(document.getElementById("root")).render(
             </Route>
 
             <Route path="/app" element={<Home />} />
+            <Route path="/app/products" element={<AppProducts />} />
           </Routes>
         </BrowserRouter>
       </StrictMode>
