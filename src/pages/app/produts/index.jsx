@@ -38,9 +38,6 @@ export default function AppProducts() {
     setProducts(dataProducts);
   }, [data, category]);
 
-  console.log(isLoading);
-  console.log({ products });
-
   return (
     <AppTemplate isNavbar={true} isBottom={true}>
       <div className="w-full">

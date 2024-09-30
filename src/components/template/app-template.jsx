@@ -8,7 +8,11 @@ import { Link, useLocation } from "react-router-dom";
 export default function AppTemplate({ isNavbar, isBottom, children }) {
   const ListLink = ({ teks, href }) => {
     return (
-      <li className="text-[.9rem] text-gray-700 hover:text-yellow-500 cursor-pointer">
+      <li
+        className={`text-[.9rem]  cursor-pointer ${
+          pathname === href ? "text-yellow-500" : "text-gray-700"
+        }`}
+      >
         <Link to={href}>{teks}</Link>
       </li>
     );
@@ -29,7 +33,7 @@ export default function AppTemplate({ isNavbar, isBottom, children }) {
             <ul className="hidden lg:flex gap-6">
               <ListLink teks={"Home"} href={"/app"} />
               <ListLink teks={"Products"} href={"/app/products"} />
-              <ListLink teks={"Charts"} href={"/app/charts"} />
+              <ListLink teks={"Cart"} href={"/app/cart"} />
               <ListLink teks={"Love"} href={"/app/love"} />
             </ul>
             <img
@@ -66,8 +70,13 @@ export default function AppTemplate({ isNavbar, isBottom, children }) {
               }`}
             />
           </Link>
-          <Link>
-            <BsCart4 size={25} className="text-white hover:text-yellow-500" />
+          <Link to={"/app/cart"}>
+            <BsCart4
+              size={25}
+              className={`${
+                pathname === "/app/cart" ? "text-yellow-500" : "text-white"
+              }`}
+            />
           </Link>
           <Link>
             <IoHeartCircleSharp
